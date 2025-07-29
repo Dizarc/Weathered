@@ -10,13 +10,19 @@ qt_standard_project_setup(REQUIRES 6.5)
 
 qt_add_executable(appWeathered
     main.cpp
+
+    Weather-Service/WeatherApi.h Weather-Service/WeatherApi.cpp
+
+    Quote-Service/QuoteManager.h Quote-Service/QuoteManager.cpp
 )
 
 qt_add_qml_module(appWeathered
     URI Weathered
     VERSION 1.0
     QML_FILES
-        Main.qml
+        Qml/Main.qml
+
+        Qml/WeatherBox.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
