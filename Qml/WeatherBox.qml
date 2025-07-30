@@ -1,5 +1,7 @@
 import QtQuick
 
+import com.dizarc.WeatherApi
+
 Item {
   id: myWeatherBox
 
@@ -15,7 +17,7 @@ Item {
       }
 
       Text {
-        text: qsTr("15C")
+        text: WeatherApi.info
         font.pointSize: 15
       }
     }
