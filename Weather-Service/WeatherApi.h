@@ -8,13 +8,17 @@
 #include <QUrlQuery>
 #include <QNetworkRequest>
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 namespace ApiAccess {
     inline const QString GEOCODE_URL = "http://api.openweathermap.org/geo/1.0/";
-    inline const QString WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}";
+    inline const QString WEATHER_URL = "https://api.openweathermap.org/data/2.5/";
+    inline const QString UNITS = "metric";
 
     inline const QString getApiKey();
     inline const QString getApiCityCountry(); // City & Country(ISO 3166 code) divided by comma
+
 }
 
 class WeatherApi : public QObject
@@ -28,17 +32,23 @@ public:
     QString info() const;
 
 public slots:
-    void fetchData();
+    void fetchGeoData();
+    void fetchWeatherData(const QString &name, const QString lat, const QString lon);
+
+private slots:
     void parseGeoData();
+    void parseWeatherData();
 
 signals:
+    void coordinatesReady(const QString &name, const QString lat, const QString lon);
     void infoChanged();
 
 private:
     void setInfo(const QString &data);
 
     QNetworkAccessManager *m_manager;
-    QNetworkReply *m_reply = nullptr;
+    QNetworkReply *m_geoReply = nullptr;
+    QNetworkReply *m_weatherReply = nullptr;
     QString m_info;
 };
 
