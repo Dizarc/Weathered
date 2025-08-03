@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-import com.dizarc.WeatherApi
+import com.dizarc.WeatherModel
 
 Item {
   id: myWeatherBox
@@ -18,13 +18,13 @@ Item {
       }
 
       Text {
-        text: WeatherApi.info
+        //text: WeatherModel.info
         font.pointSize: 15
       }
 
       Button {
         width: 50
-        onClicked: WeatherApi.fetchGeoData(); // for testing
+        onClicked: WeatherModel.fetchGeoData(); // for testing
       }
     }
   }

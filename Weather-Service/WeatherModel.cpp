@@ -1,34 +1,71 @@
-#include "WeatherApi.h"
+#include "WeatherModel.h"
 
-const QString ApiAccess::getApiKey()
+WeatherModel::WeatherModel(QObject *parent) : QAbstractListModel{parent}
 {
-    return QProcessEnvironment::systemEnvironment()
-        .value("API_KEY", "");
-}
-const QString ApiAccess::getApiCityCountry()
-{
-    return QProcessEnvironment::systemEnvironment()
-    .value("API_CITY_COUNTRY", "");
-}
-
-WeatherApi::WeatherApi(QObject *parent) : QObject{parent}
-{
-    m_info = "-C";
-
     m_manager = new QNetworkAccessManager(this);
 
-    connect(this, &WeatherApi::coordinatesReady, this, &WeatherApi::fetchWeatherData);
+    connect(this, &WeatherModel::coordinatesReady, this, &WeatherModel::fetchWeatherData);
 }
 
-QString WeatherApi::info() const
+int WeatherModel::rowCount(const QModelIndex &parent) const
 {
-    return m_info;
+    return m_weatherList.size();
 }
 
-void WeatherApi::fetchGeoData()
+QVariant WeatherModel::data(const QModelIndex &index, int role) const
 {
-    //CHANGE THESE TWO! because of the comment in the documentation:
-    //"However, note that repeated calls to this function will recreate the QProcessEnvironment object, which is a non-trivial operation"
+    QVariant val = {};
+
+    if(index.isValid() && index.row() >= 0 && index.row() < m_weatherList.size()){
+        Weather *weather = m_weatherList[index.row()];
+
+        switch(role) {
+        case cityRole:
+            val = weather->city();
+        case descRole:
+            val = weather->desc();
+        case iconRole:
+            val = weather->icon();
+        case dateTimeRole:
+            val = weather->dateTime();
+        case tempRole:
+            val = weather->temp();
+        case tempMinRole:
+            val = weather->tempMin();
+        case tempMaxRole:
+            val = weather->tempMax();
+        case humidityRole:
+            val = weather->humidity();
+        case windRole:
+            val = weather->wind();
+        case cloudsRole:
+            val = weather->clouds();
+        }
+    }
+
+    return val;
+}
+
+QHash<int, QByteArray> WeatherModel::roleNames() const
+{
+    QHash<int, QByteArray> names;
+
+    names[cityRole] = "city";
+    names[descRole] = "desc";
+    names[iconRole] = "icon";
+    names[dateTimeRole] = "dateTime";
+    names[tempRole] = "temp";
+    names[tempMinRole] = "tempMin";
+    names[tempMaxRole] = "tempMax";
+    names[humidityRole] = "humidity";
+    names[windRole] = "wind";
+    names[cloudsRole] = "cloud";
+
+    return names;
+}
+
+void WeatherModel::fetchGeoData()
+{
     if(ApiAccess::getApiKey().isEmpty()) {
         qWarning() << "Environmental variable \"API_KEY\" is empty!";
         return;
@@ -52,10 +89,10 @@ void WeatherApi::fetchGeoData()
 
     m_geoReply = m_manager->get(QNetworkRequest(ApiAccess::GEOCODE_URL + "direct?" + query.toString()));
 
-    connect(m_geoReply, &QNetworkReply::finished, this, &WeatherApi::parseGeoData);
+    connect(m_geoReply, &QNetworkReply::finished, this, &WeatherModel::parseGeoData);
 }
 
-void WeatherApi::parseGeoData()
+void WeatherModel::parseGeoData()
 {
     if(m_geoReply->error() == QNetworkReply::NoError) {
         QByteArray data = m_geoReply->readAll();
@@ -91,7 +128,7 @@ void WeatherApi::parseGeoData()
     m_geoReply = nullptr;
 }
 
-void WeatherApi::fetchWeatherData(const QString &name, const QString lat, const QString lon)
+void WeatherModel::fetchWeatherData(const QString &name, const QString lat, const QString lon)
 {
     if(m_weatherReply) {
         m_weatherReply->abort();
@@ -108,10 +145,10 @@ void WeatherApi::fetchWeatherData(const QString &name, const QString lat, const 
 
     m_weatherReply = m_manager->get(QNetworkRequest(ApiAccess::WEATHER_URL + "weather?" + query.toString()));
 
-    connect(m_weatherReply, &QNetworkReply::finished, this, &WeatherApi::parseWeatherData);
+    connect(m_weatherReply, &QNetworkReply::finished, this, &WeatherModel::parseWeatherData);
 }
 
-void WeatherApi::parseWeatherData()
+void WeatherModel::parseWeatherData()
 {
     if(m_weatherReply->error() == QNetworkReply::NoError) {
         QByteArray data = m_weatherReply->readAll();
@@ -170,12 +207,4 @@ void WeatherApi::parseWeatherData()
 
     m_weatherReply->deleteLater();
     m_weatherReply = nullptr;
-}
-
-void WeatherApi::setInfo(const QString &data)
-{
-    if(m_info != data) {
-        m_info = data;
-        emit infoChanged();
-    }
 }
