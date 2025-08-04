@@ -1,7 +1,7 @@
 #ifndef WEATHERMODEL_H
 #define WEATHERMODEL_H
 
-#include <QAbstractListModel>
+#include <QAbstractItemModel>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QProcessEnvironment>
@@ -47,6 +47,10 @@ public slots:
 private slots:
     void parseGeoData();
     void parseWeatherData();
+
+    void setCurrentWeather(Weather *weather);
+    void clearList();
+    void addWeather(Weather *weather);
 
 signals:
     void coordinatesReady(const QString &name,

@@ -59,7 +59,7 @@ QHash<int, QByteArray> WeatherModel::roleNames() const
     names[tempMaxRole] = "tempMax";
     names[humidityRole] = "humidity";
     names[windRole] = "wind";
-    names[cloudsRole] = "cloud";
+    names[cloudsRole] = "clouds";
 
     return names;
 }
@@ -128,6 +128,7 @@ void WeatherModel::parseGeoData()
     m_geoReply = nullptr;
 }
 
+// TODO: MISTAKE HERE WITH GIVING THE NAME!!
 void WeatherModel::fetchWeatherData(const QString &name, const QString lat, const QString lon)
 {
     if(m_weatherReply) {
@@ -169,37 +170,32 @@ void WeatherModel::parseWeatherData()
         QJsonObject windObject = rootObject["wind"].toObject();
         QJsonObject cloudsObject = rootObject["clouds"].toObject();
 
-        double temp = mainObject["temp"].toDouble();
-        double tempMin = mainObject["temp_min"].toDouble();
-        double tempMax = mainObject["temp_max"].toDouble();
-        double humidity = mainObject["humidity"].toDouble();
+        Weather *weather = new Weather(this);
 
-        double windSpeed = windObject["speed"].toDouble();
+        QString cityname = "BLABLA";
 
-        double cloudiness = cloudsObject["all"].toDouble();
+        weather->setCity(cityname);
+
+        weather->setTemp(mainObject["temp"].toDouble());
+        weather->setTempMin(mainObject["temp_min"].toDouble());
+        weather->setTempMax(mainObject["temp_max"].toDouble());
+
+        weather->setHumidity(mainObject["humidity"].toDouble());
+        weather->setWind(windObject["speed"].toDouble());
+        weather->setClouds(cloudsObject["all"].toDouble());
 
         QJsonArray weatherArray = rootObject["weather"].toArray();
-        QString weatherMain = "";
-        QString weatherDesc = "";
-        QString weatherIcon = "";
-
         if(!weatherArray.isEmpty()) {
             QJsonObject weatherObject = weatherArray.first().toObject();
 
-            weatherMain = weatherObject["main"].toString();
-            weatherDesc = weatherObject["description"].toString();
-            weatherIcon = weatherObject["icon"].toString();
+            weather->setDesc(weatherObject["description"].toString());
+
+            weather->setIcon(QUrl("https://openweathermap.org/img/wn/"
+                                  + weatherObject["icon"].toString()
+                                  + "@2x.png"));
         }
 
-        qDebug() << "Temp: " << temp
-                 << "Min temp: " << tempMin
-                 << "Max temp: " << tempMax
-                 << "humidity: " << humidity
-                 << "wind speed: " << windSpeed
-                 << "cloudiness: " << cloudiness
-                 << "Weather main: " << weatherMain
-                 << "Weather description: " << weatherDesc
-                 << "Weather icon: " << weatherIcon;
+        setCurrentWeather(weather);
 
     }
     else
@@ -207,4 +203,30 @@ void WeatherModel::parseWeatherData()
 
     m_weatherReply->deleteLater();
     m_weatherReply = nullptr;
+}
+
+void WeatherModel::setCurrentWeather(Weather *weather)
+{
+    clearList();
+    addWeather(weather);
+}
+
+void WeatherModel::clearList()
+{
+    if(m_weatherList.isEmpty())
+        return;
+
+    beginResetModel();
+    qDeleteAll(m_weatherList);
+    m_weatherList.clear();
+    endResetModel();
+}
+
+void WeatherModel::addWeather(Weather *weather)
+{
+    beginInsertRows(QModelIndex(), m_weatherList.length(), m_weatherList.length());
+    m_weatherList.append(weather);
+    endInsertRows();
+    qDebug() << "INSERTED: " << weather->city() <<" "<< weather->desc();
+
 }
