@@ -7,13 +7,6 @@ TODO: WeatherModel::fetchGeoData()
     Change the way it gets the values for the API stuff because of a comment in docs:
     "However, note that repeated calls to this function will recreate the QProcessEnvironment object, which is a non-trivial operation"
 
-TODO: WeatherModel::fetchGeoData()
-    Find a way to fetch the city name
-
-TODO: WeatherBox.qml
-    delegate text show up as 0 for some reason.
-
-
 */
 int main(int argc, char *argv[])
 {

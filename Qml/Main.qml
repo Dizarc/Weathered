@@ -20,10 +20,8 @@ Window {
 
     WeatherBox {
       Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-      Layout.minimumWidth: 50
-      Layout.preferredWidth: 100
-      Layout.minimumHeight: 50
-
+      Layout.fillHeight: true
+      Layout.fillWidth: true
     }
 
     Text {

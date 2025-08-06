@@ -1,67 +1,87 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 import com.dizarc.WeatherModel
 
-Item {
+Row{
   id: myWeatherBox
 
-  Row{
-    spacing: 5
-    anchors.fill: parent
-    Button {
-      width: 100
-      height: 20
-      text: qsTr("Refresh weather")
-      onClicked: WeatherModel.fetchGeoData(); // for testing
-    }
+  spacing: 5
 
-    ListView {
-      id: listView
-      width: 500
-      height: 50
-      model: WeatherModel
+  Button {
+    width: 100
+    height: 20
+    text: qsTr("Refresh weather")
+    onClicked: WeatherModel.fetchGeoData(); // for testing
+  }
 
-      delegate: Rectangle {
-        id: delegate
+  ListView {
+    id: listView
 
-        required property string city
-        required property string desc
-        required property url icon
-        required property string dateTime
-        required property double temp
-        required property double tempMin
-        required property double tempMax
-        required property double humidity
-        required property double wind
-        required property int clouds
+    width: 500
 
-        width: listView.width
-        height: 40
-        visible: true
-        Row {
-          anchors.fill: parent
-          spacing: 5
-          Text {
-            text: delegate.city
-            width: 150
-          }
-          Text {
-            text: delegate.desc
-            width: 150
-          }
-          Text {
-            text: delegate.temp
-            width: 150
-          }
+    model: WeatherModel
+
+    delegate: Rectangle {
+      id: delegate
+
+      required property string city
+      required property string desc
+      required property url icon
+      required property string dateTime
+      required property double temp
+      required property double tempMin
+      required property double tempMax
+      required property double humidity
+      required property double wind
+      required property int clouds
+
+      width: listView.width
+      implicitHeight: 50
+
+      clip: true
+
+      RowLayout {
+        anchors.fill: parent
+
+        spacing: 5
+
+        Image {
+          source: delegate.icon
+
+          Layout.alignment: Qt.AlignVCenter
+
+          sourceSize.width: 50
+          fillMode: Image.PreserveAspectFit
+        }
+
+        Text {
+          text: delegate.city
+
+          Layout.alignment: Qt.AlignVCenter
+
+          font.pointSize: 12
+          width: 150
+        }
+        Text {
+          text: delegate.desc
+
+          Layout.alignment: Qt.AlignVCenter
+
+          font.capitalization: Font.Capitalize
+          font.pointSize: 12
+          width: 150
+        }
+        Text {
+          text: delegate.temp + "C"
+
+          Layout.alignment: Qt.AlignVCenter
+
+          font.pointSize: 12
+          width: 150
         }
       }
     }
-
-    // Image {
-    //   source: ""
-    //   sourceSize.width: 50
-    //   fillMode: Image.PreserveAspectFit
-    // }
   }
 }

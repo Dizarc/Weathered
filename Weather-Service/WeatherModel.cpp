@@ -14,36 +14,35 @@ int WeatherModel::rowCount(const QModelIndex &parent) const
 
 QVariant WeatherModel::data(const QModelIndex &index, int role) const
 {
-    QVariant val = {};
+    if(!index.isValid() || index.row() <0 || index.row() >= m_weatherList.size())
+        return {};
 
-    if(index.isValid() && index.row() >= 0 && index.row() < m_weatherList.size()){
-        Weather *weather = m_weatherList[index.row()];
+    Weather *weather = m_weatherList[index.row()];
 
-        switch(role) {
-        case cityRole:
-            val = weather->city();
-        case descRole:
-            val = weather->desc();
-        case iconRole:
-            val = weather->icon();
-        case dateTimeRole:
-            val = weather->dateTime();
-        case tempRole:
-            val = weather->temp();
-        case tempMinRole:
-            val = weather->tempMin();
-        case tempMaxRole:
-            val = weather->tempMax();
-        case humidityRole:
-            val = weather->humidity();
-        case windRole:
-            val = weather->wind();
-        case cloudsRole:
-            val = weather->clouds();
-        }
+    switch(role) {
+    case cityRole:
+        return weather->city();
+    case descRole:
+        return weather->desc();
+    case iconRole:
+        return weather->icon();
+    case dateTimeRole:
+        return weather->dateTime();
+    case tempRole:
+        return weather->temp();
+    case tempMinRole:
+        return weather->tempMin();
+    case tempMaxRole:
+        return weather->tempMax();
+    case humidityRole:
+        return weather->humidity();
+    case windRole:
+        return weather->wind();
+    case cloudsRole:
+        return weather->clouds();
+    default:
+        return {};
     }
-
-    return val;
 }
 
 QHash<int, QByteArray> WeatherModel::roleNames() const
@@ -128,7 +127,6 @@ void WeatherModel::parseGeoData()
     m_geoReply = nullptr;
 }
 
-// TODO: MISTAKE HERE WITH GIVING THE NAME!!
 void WeatherModel::fetchWeatherData(const QString &name, const QString lat, const QString lon)
 {
     if(m_weatherReply) {
@@ -146,11 +144,15 @@ void WeatherModel::fetchWeatherData(const QString &name, const QString lat, cons
 
     m_weatherReply = m_manager->get(QNetworkRequest(ApiAccess::WEATHER_URL + "weather?" + query.toString()));
 
+    m_weatherReply->setProperty("cityName", name);
+
     connect(m_weatherReply, &QNetworkReply::finished, this, &WeatherModel::parseWeatherData);
 }
 
 void WeatherModel::parseWeatherData()
 {
+    QString cityName = m_weatherReply->property("cityName").toString();
+
     if(m_weatherReply->error() == QNetworkReply::NoError) {
         QByteArray data = m_weatherReply->readAll();
 
@@ -172,9 +174,7 @@ void WeatherModel::parseWeatherData()
 
         Weather *weather = new Weather(this);
 
-        QString cityname = "BLABLA";
-
-        weather->setCity(cityname);
+        weather->setCity(cityName);
 
         weather->setTemp(mainObject["temp"].toDouble());
         weather->setTempMin(mainObject["temp_min"].toDouble());
@@ -217,16 +217,20 @@ void WeatherModel::clearList()
         return;
 
     beginResetModel();
+
     qDeleteAll(m_weatherList);
     m_weatherList.clear();
+
     endResetModel();
 }
 
 void WeatherModel::addWeather(Weather *weather)
 {
     beginInsertRows(QModelIndex(), m_weatherList.length(), m_weatherList.length());
-    m_weatherList.append(weather);
-    endInsertRows();
-    qDebug() << "INSERTED: " << weather->city() <<" "<< weather->desc();
 
+    m_weatherList << weather;
+
+    endInsertRows();
+
+    qDebug() << "INSERTED: " << m_weatherList[0]->city() <<" "<< weather->desc();
 }
