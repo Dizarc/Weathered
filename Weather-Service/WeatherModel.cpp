@@ -142,7 +142,7 @@ void WeatherModel::fetchWeatherData(const QString &name, const QString lat, cons
     query.addQueryItem("units", ApiAccess::UNITS);
     query.addQueryItem("appid", ApiAccess::getApiKey());
 
-    m_weatherReply = m_manager->get(QNetworkRequest(ApiAccess::WEATHER_URL + "weather?" + query.toString()));
+    m_weatherReply = m_manager->get(QNetworkRequest(ApiAccess::WEATHER_URL + "forecast?" + query.toString()));
 
     m_weatherReply->setProperty("cityName", name);
 
@@ -166,37 +166,48 @@ void WeatherModel::parseWeatherData()
 
         QJsonObject rootObject = jsonDocument.object();
 
-        //Main object contains temperatures and humidity
-        QJsonObject mainObject = rootObject["main"].toObject();
+        QJsonArray forecastArray = rootObject["list"].toArray();
 
-        QJsonObject windObject = rootObject["wind"].toObject();
-        QJsonObject cloudsObject = rootObject["clouds"].toObject();
+        QList<Weather*> forecastList;
 
-        Weather *weather = new Weather(this);
+        int count = 0;
 
-        weather->setCity(cityName);
+        for( const QJsonValue &value : forecastArray){
 
-        weather->setTemp(mainObject["temp"].toDouble());
-        weather->setTempMin(mainObject["temp_min"].toDouble());
-        weather->setTempMax(mainObject["temp_max"].toDouble());
+            if(count >= 24) break; //3 days, 3h intervals
 
-        weather->setHumidity(mainObject["humidity"].toDouble());
-        weather->setWind(windObject["speed"].toDouble());
-        weather->setClouds(cloudsObject["all"].toDouble());
+            QJsonObject entry = value.toObject();
 
-        QJsonArray weatherArray = rootObject["weather"].toArray();
-        if(!weatherArray.isEmpty()) {
-            QJsonObject weatherObject = weatherArray.first().toObject();
+            QJsonArray weatherArray = entry["weather"].toArray();
+            QJsonObject weatherObject = weatherArray.at(0).toObject();
 
+            QJsonObject mainObject = entry["main"].toObject();
+            QJsonObject windObject = entry["wind"].toObject();
+            QJsonObject cloudsObject = entry["clouds"].toObject();
+
+            Weather *weather = new Weather(this);
+
+            weather->setCity(cityName);
             weather->setDesc(weatherObject["description"].toString());
-
             weather->setIcon(QUrl("https://openweathermap.org/img/wn/"
                                   + weatherObject["icon"].toString()
                                   + "@2x.png"));
+
+            weather->setDateTime(entry["dt_txt"].toString());
+
+            weather->setTemp(mainObject["temp"].toDouble());
+            weather->setTempMin(mainObject["temp_min"].toDouble());
+            weather->setTempMax(mainObject["temp_max"].toDouble());
+            weather->setHumidity(mainObject["humidity"].toDouble());
+            weather->setWind(windObject["speed"].toDouble());
+            weather->setClouds(cloudsObject["all"].toInt());
+
+            forecastList << weather;
+
+            count++;
         }
 
-        setCurrentWeather(weather);
-
+        setCurrentWeather(forecastList);
     }
     else
         qWarning() << "Error from geocoding API reply: " + m_weatherReply->errorString();
@@ -205,10 +216,10 @@ void WeatherModel::parseWeatherData()
     m_weatherReply = nullptr;
 }
 
-void WeatherModel::setCurrentWeather(Weather *weather)
+void WeatherModel::setCurrentWeather(QList<Weather*> &forecast)
 {
     clearList();
-    addWeather(weather);
+    addWeather(forecast);
 }
 
 void WeatherModel::clearList()
@@ -224,13 +235,20 @@ void WeatherModel::clearList()
     endResetModel();
 }
 
-void WeatherModel::addWeather(Weather *weather)
+void WeatherModel::addWeather(QList<Weather*> &forecast)
 {
-    beginInsertRows(QModelIndex(), m_weatherList.length(), m_weatherList.length());
+    int start = m_weatherList.length();
+    int end = start + forecast.length() - 1;
 
-    m_weatherList << weather;
+    beginInsertRows(QModelIndex(), start, end);
+
+    m_weatherList.append(forecast);
 
     endInsertRows();
 
-    qDebug() << "INSERTED: " << m_weatherList[0]->city() <<" "<< weather->desc();
+    for(const Weather *w : forecast) {
+        qDebug() << "INSERTED: " << w->city() <<" "<< w->desc();
+
+    }
+
 }

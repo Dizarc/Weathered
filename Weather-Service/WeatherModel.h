@@ -48,9 +48,9 @@ private slots:
     void parseGeoData();
     void parseWeatherData();
 
-    void setCurrentWeather(Weather *weather);
+    void setCurrentWeather(QList<Weather*> &forecast);
     void clearList();
-    void addWeather(Weather *weather);
+    void addWeather(QList<Weather*> &forecast);
 
 signals:
     void coordinatesReady(const QString &name,

@@ -4,7 +4,7 @@ import QtQuick.Layouts
 
 import com.dizarc.WeatherModel
 
-Row{
+Row {
   id: myWeatherBox
 
   spacing: 5
@@ -20,6 +20,7 @@ Row{
     id: listView
 
     width: 500
+    height: 1000
 
     model: WeatherModel
 
