@@ -16,73 +16,26 @@ Row {
     onClicked: WeatherModel.fetchGeoData(); // for testing
   }
 
+  // Use QSortFilterProxyModel for filtering by day
   ListView {
-    id: listView
+    id: pathView
 
     width: 500
     height: 1000
 
     model: WeatherModel
 
-    delegate: Rectangle {
-      id: delegate
+    delegate: WeatherDelegate {}
+  }
 
-      required property string city
-      required property string desc
-      required property url icon
-      required property string dateTime
-      required property double temp
-      required property double tempMin
-      required property double tempMax
-      required property double humidity
-      required property double wind
-      required property int clouds
+  Timer {
+    id: cycleTimer
 
-      width: listView.width
-      implicitHeight: 50
-
-      clip: true
-
-      RowLayout {
-        anchors.fill: parent
-
-        spacing: 5
-
-        Image {
-          source: delegate.icon
-
-          Layout.alignment: Qt.AlignVCenter
-
-          sourceSize.width: 50
-          fillMode: Image.PreserveAspectFit
-        }
-
-        Text {
-          text: delegate.city
-
-          Layout.alignment: Qt.AlignVCenter
-
-          font.pointSize: 12
-          width: 150
-        }
-        Text {
-          text: delegate.desc
-
-          Layout.alignment: Qt.AlignVCenter
-
-          font.capitalization: Font.Capitalize
-          font.pointSize: 12
-          width: 150
-        }
-        Text {
-          text: delegate.temp + "C"
-
-          Layout.alignment: Qt.AlignVCenter
-
-          font.pointSize: 12
-          width: 150
-        }
-      }
+    interval: 3000
+    repeat: true
+    running: true
+    onTriggered: {
+      console.log("hey")
     }
   }
 }
