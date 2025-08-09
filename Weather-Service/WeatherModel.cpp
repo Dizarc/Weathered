@@ -63,6 +63,11 @@ QHash<int, QByteArray> WeatherModel::roleNames() const
     return names;
 }
 
+/*
+TODO: WeatherModel::fetchGeoData()
+    Change the way it gets the values for the API stuff because of a comment in docs:
+    "However, note that repeated calls to this function will recreate the QProcessEnvironment object, which is a non-trivial operation"
+*/
 void WeatherModel::fetchGeoData()
 {
     if(ApiAccess::getApiKey().isEmpty()) {
@@ -245,10 +250,4 @@ void WeatherModel::addWeather(QList<Weather*> &forecast)
     m_weatherList.append(forecast);
 
     endInsertRows();
-
-    for(const Weather *w : forecast) {
-        qDebug() << "INSERTED: " << w->city() <<" "<< w->desc();
-
-    }
-
 }

@@ -4,6 +4,8 @@ import QtQuick.Layouts
 
 import com.dizarc.WeatherModel
 
+import com.dizarc.WeatherFilterModel
+
 Row {
   id: myWeatherBox
 
@@ -16,14 +18,13 @@ Row {
     onClicked: WeatherModel.fetchGeoData(); // for testing
   }
 
-  // Use QSortFilterProxyModel for filtering by day
   ListView {
     id: pathView
 
     width: 500
     height: 1000
 
-    model: WeatherModel
+    model: WeatherFilterModel
 
     delegate: WeatherDelegate {}
   }

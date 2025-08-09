@@ -11,9 +11,10 @@ qt_standard_project_setup(REQUIRES 6.8)
 qt_add_executable(appWeathered
     main.cpp
 
+    Weather-Service/ApiAccess.hpp
     Weather-Service/Weather.h Weather-Service/Weather.cpp
     Weather-Service/WeatherModel.h Weather-Service/WeatherModel.cpp
-    Weather-Service/ApiAccess.h
+    Weather-Service/WeatherFilterModel.h Weather-Service/WeatherFilterModel.cpp
 
     Quote-Service/QuoteManager.h Quote-Service/QuoteManager.cpp
 )

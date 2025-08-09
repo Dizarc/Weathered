@@ -43,7 +43,7 @@ Rectangle {
           width: 150
         }
         Text {
-          text: weatherDelegate.desc
+          text: weatherDelegate.dateTime
 
           Layout.alignment: Qt.AlignVCenter
 

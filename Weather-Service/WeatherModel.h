@@ -11,7 +11,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "ApiAccess.h"
+#include "ApiAccess.hpp"
 #include "Weather.h"
 
 class WeatherModel : public QAbstractListModel
