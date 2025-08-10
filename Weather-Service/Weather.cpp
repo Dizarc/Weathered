@@ -11,7 +11,7 @@ QString Weather::city() const
     return m_city;
 }
 
-void Weather::setCity(QString &newCity)
+void Weather::setCity(const QString &newCity)
 {
     if(m_city == newCity)
         return;

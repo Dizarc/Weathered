@@ -23,7 +23,7 @@ public:
     explicit Weather(QObject *parent = nullptr);
 
     QString city() const;
-    void setCity(QString &newCity);
+    void setCity(const QString &newCity);
 
     QString desc() const;
     void setDesc(const QString &newDesc);

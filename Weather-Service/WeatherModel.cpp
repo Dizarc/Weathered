@@ -175,11 +175,7 @@ void WeatherModel::parseWeatherData()
 
         QList<Weather*> forecastList;
 
-        int count = 0;
-
         for( const QJsonValue &value : forecastArray){
-
-            if(count >= 24) break; //3 days, 3h intervals
 
             QJsonObject entry = value.toObject();
 
@@ -208,8 +204,6 @@ void WeatherModel::parseWeatherData()
             weather->setClouds(cloudsObject["all"].toInt());
 
             forecastList << weather;
-
-            count++;
         }
 
         setCurrentWeather(forecastList);
@@ -250,4 +244,9 @@ void WeatherModel::addWeather(QList<Weather*> &forecast)
     m_weatherList.append(forecast);
 
     endInsertRows();
+}
+
+QList<Weather *> WeatherModel::weatherList() const
+{
+    return m_weatherList;
 }

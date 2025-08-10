@@ -14,7 +14,8 @@ qt_add_executable(appWeathered
     Weather-Service/ApiAccess.hpp
     Weather-Service/Weather.h Weather-Service/Weather.cpp
     Weather-Service/WeatherModel.h Weather-Service/WeatherModel.cpp
-    Weather-Service/WeatherFilterModel.h Weather-Service/WeatherFilterModel.cpp
+    Weather-Service/WeatherDayModel.h Weather-Service/WeatherDayModel.cpp
+    Weather-Service/WeatherDay.h Weather-Service/WeatherDay.cpp
 
     Quote-Service/QuoteManager.h Quote-Service/QuoteManager.cpp
 )

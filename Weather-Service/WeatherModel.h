@@ -19,8 +19,8 @@ class WeatherModel : public QAbstractListModel
     Q_OBJECT
 
 public:
-    enum Roles{
-        cityRole = Qt::UserRole +1,
+    enum Roles {
+        cityRole = Qt::UserRole + 1,
         descRole,
         iconRole,
         dateTimeRole,
@@ -37,6 +37,8 @@ public:
     virtual int rowCount(const QModelIndex &parent) const override;
     virtual QVariant data(const QModelIndex &index, int role) const override;
     virtual QHash<int, QByteArray> roleNames() const override;
+
+    QList<Weather*> weatherList() const;
 
 public slots:
     void fetchGeoData();

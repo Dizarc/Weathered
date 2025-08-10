@@ -1,63 +1,98 @@
 import QtQuick
 import QtQuick.Layouts
 
+import com.dizarc.Weather
+
 Rectangle {
-      id: weatherDelegate
+  id: weatherDelegate
 
-      required property string city
-      required property string desc
-      required property url icon
-      required property string dateTime
-      required property double temp
-      required property double tempMin
-      required property double tempMax
-      required property double humidity
-      required property double wind
-      required property int clouds
+  required property string day
+  required property list<QtObject> weatherItems
 
-      width: pathView.width
-      implicitHeight: 50
+  width: pathView.width
+  height: 300
 
-      clip: true
+  Column {
+    anchors.fill: parent
+    spacing: 10
 
-      RowLayout {
-        anchors.fill: parent
+    Text {
+      text: weatherDelegate.day
+      font.bold: true
+      font.pixelSize: 15
+      horizontalAlignment: Text.AlignHCenter
+      width: parent.width
+    }
 
-        spacing: 5
+    ListView {
+      id: listView
+      width: parent.width
+      height: parent.height - 40
 
-        Image {
-          source: weatherDelegate.icon
+      model: weatherDelegate.weatherItems
 
-          Layout.alignment: Qt.AlignVCenter
+      delegate: Rectangle {
+        id: weatherItemDelegate
 
-          sourceSize.width: 50
-          fillMode: Image.PreserveAspectFit
-        }
+        required property string city
+        required property string desc
+        required property url icon
+        required property string dateTime
+        required property double temp
+        required property double tempMin
+        required property double tempMax
+        required property double humidity
+        required property double wind
+        required property int clouds
 
-        Text {
-          text: weatherDelegate.city
+        width: listView.width
+        implicitHeight: 50
 
-          Layout.alignment: Qt.AlignVCenter
+        clip: true
 
-          font.pointSize: 12
-          width: 150
-        }
-        Text {
-          text: weatherDelegate.dateTime
+        RowLayout {
+          anchors.fill: parent
 
-          Layout.alignment: Qt.AlignVCenter
+          spacing: 5
 
-          font.capitalization: Font.Capitalize
-          font.pointSize: 12
-          width: 150
-        }
-        Text {
-          text: weatherDelegate.temp + "C"
+          Image {
+            source: weatherItemDelegate.icon
 
-          Layout.alignment: Qt.AlignVCenter
+            Layout.alignment: Qt.AlignVCenter
 
-          font.pointSize: 12
-          width: 150
+            sourceSize.width: 50
+            fillMode: Image.PreserveAspectFit
+          }
+
+          Text {
+            text: weatherItemDelegate.city
+
+            Layout.alignment: Qt.AlignVCenter
+
+            font.pointSize: 12
+            width: 150
+          }
+
+          Text {
+            text: weatherItemDelegate.dateTime
+
+            Layout.alignment: Qt.AlignVCenter
+
+            font.capitalization: Font.Capitalize
+            font.pointSize: 12
+            width: 150
+          }
+
+          Text {
+            text: weatherItemDelegate.temp + "C"
+
+            Layout.alignment: Qt.AlignVCenter
+
+            font.pointSize: 12
+            width: 150
+          }
         }
       }
     }
+  }
+}
