@@ -1,31 +1,29 @@
 import QtQuick
 import QtQuick.Layouts
 
-import com.dizarc.Weather
-
 Rectangle {
   id: weatherDelegate
 
   required property string day
   required property list<QtObject> weatherItems
 
-  width: pathView.width
-  height: 300
-
   Column {
     anchors.fill: parent
     spacing: 10
 
     Text {
-      text: weatherDelegate.day
-      font.bold: true
       font.pixelSize: 15
-      horizontalAlignment: Text.AlignHCenter
-      width: parent.width
+      verticalAlignment: Text.AlignBottom
+
+      text: {
+        var dateObj = new Date(weatherDelegate.day);
+        return dateObj.toLocaleDateString(Qt.locale(), "ddd\nMMM dd, yyyy");
+      }
     }
 
     ListView {
       id: listView
+
       width: parent.width
       height: parent.height - 40
 
@@ -46,7 +44,7 @@ Rectangle {
         required property int clouds
 
         width: listView.width
-        implicitHeight: 50
+        implicitHeight: 100
 
         clip: true
 
@@ -60,17 +58,8 @@ Rectangle {
 
             Layout.alignment: Qt.AlignVCenter
 
-            sourceSize.width: 50
+            sourceSize.width: 100
             fillMode: Image.PreserveAspectFit
-          }
-
-          Text {
-            text: weatherItemDelegate.city
-
-            Layout.alignment: Qt.AlignVCenter
-
-            font.pointSize: 12
-            width: 150
           }
 
           Text {
@@ -78,9 +67,9 @@ Rectangle {
 
             Layout.alignment: Qt.AlignVCenter
 
-            font.capitalization: Font.Capitalize
-            font.pointSize: 12
-            width: 150
+            font. capitalization: Font.Capitalize
+            font.pointSize: 11
+            width: 100
           }
 
           Text {
@@ -88,8 +77,8 @@ Rectangle {
 
             Layout.alignment: Qt.AlignVCenter
 
-            font.pointSize: 12
-            width: 150
+            font.pointSize: 11
+            width: 100
           }
         }
       }

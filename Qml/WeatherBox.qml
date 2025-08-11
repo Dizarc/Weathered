@@ -4,7 +4,8 @@ import QtQuick.Layouts
 
 import com.dizarc.WeatherModel
 import com.dizarc.WeatherDayModel
-Row {
+
+Column {
   id: myWeatherBox
 
   spacing: 5
@@ -12,43 +13,51 @@ Row {
   Button {
     width: 100
     height: 20
+
     text: qsTr("Refresh weather")
     onClicked: {
       WeatherModel.fetchGeoData();
-    }// for testing
+    } // Only for testing
   }
 
-  ListView {
-    id: pathView
+  Text {
+    id: cityText
+
+    text: WeatherModel.city
+    font.weight: Font.Light
+    font.pixelSize: 30
+    verticalAlignment: Text.AlignBottom
+  }
+
+  SwipeView {
+    id: swipeView
 
     width: 500
     height: 1000
 
-    model: WeatherDayModel
+    clip: true
+    interactive: false
+    currentIndex: 0
 
-    delegate: WeatherDelegate {}
+    Repeater {
+      model: WeatherDayModel
 
-    // path: Path {
-    //   startX: 0; startY: 100
-    //   PathLine { x: pathView.width; y: 100}
-    // }
-
-    // snapMode: PathView.SnapToItem
-    // highlightRangeMode: PathView.StrictlyEnforceRange
-    // preferredHighlightBegin: 0.5
-    // preferredHighlightEnd: 0.5
-    // highlightMoveDuration: 400
+      delegate: WeatherDelegate {
+        width: swipeView.width
+        height: swipeView.height
+      }
+    }
   }
 
   Timer {
     id: cycleTimer
 
-    interval: 3000
+    interval: swipeView.currentIndex === 0 ? 6000 : 4000
     repeat: true
     running: true
 
     onTriggered: {
-      console.log("hey")
+      swipeView.currentIndex = (swipeView.currentIndex + 1) % swipeView.count
     }
   }
 }

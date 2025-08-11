@@ -17,6 +17,7 @@
 class WeatherModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged FINAL)
 
 public:
     enum Roles {
@@ -40,11 +41,12 @@ public:
 
     QList<Weather*> weatherList() const;
 
+    void setCity(const QString &newCity);
+    QString city() const;
+
 public slots:
     void fetchGeoData();
-    void fetchWeatherData(const QString &name,
-                          const QString lat,
-                          const QString lon);
+    void fetchWeatherData(const QString lat, const QString lon);
 
 private slots:
     void parseGeoData();
@@ -55,12 +57,13 @@ private slots:
     void addWeather(QList<Weather*> &forecast);
 
 signals:
-    void coordinatesReady(const QString &name,
-                          const QString lat,
-                          const QString lon);
+    void coordinatesReady(const QString lat, const QString lon);
+
+    void cityChanged();
 
 private:
     QList<Weather*> m_weatherList;
+    QString m_city;
 
     QNetworkAccessManager *m_manager;
     QNetworkReply *m_geoReply = nullptr;

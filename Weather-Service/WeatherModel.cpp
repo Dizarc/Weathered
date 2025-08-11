@@ -122,7 +122,8 @@ void WeatherModel::parseGeoData()
                      << "lat: " << lat
                      << "lon: " << lon;
 
-            emit coordinatesReady(name, lat, lon);
+            setCity(name);
+            emit coordinatesReady(lat, lon);
         }
     }
     else
@@ -132,7 +133,7 @@ void WeatherModel::parseGeoData()
     m_geoReply = nullptr;
 }
 
-void WeatherModel::fetchWeatherData(const QString &name, const QString lat, const QString lon)
+void WeatherModel::fetchWeatherData(const QString lat, const QString lon)
 {
     if(m_weatherReply) {
         m_weatherReply->abort();
@@ -149,15 +150,11 @@ void WeatherModel::fetchWeatherData(const QString &name, const QString lat, cons
 
     m_weatherReply = m_manager->get(QNetworkRequest(ApiAccess::WEATHER_URL + "forecast?" + query.toString()));
 
-    m_weatherReply->setProperty("cityName", name);
-
     connect(m_weatherReply, &QNetworkReply::finished, this, &WeatherModel::parseWeatherData);
 }
 
 void WeatherModel::parseWeatherData()
 {
-    QString cityName = m_weatherReply->property("cityName").toString();
-
     if(m_weatherReply->error() == QNetworkReply::NoError) {
         QByteArray data = m_weatherReply->readAll();
 
@@ -188,7 +185,8 @@ void WeatherModel::parseWeatherData()
 
             Weather *weather = new Weather(this);
 
-            weather->setCity(cityName);
+            weather->setCity(city());
+
             weather->setDesc(weatherObject["description"].toString());
             weather->setIcon(QUrl("https://openweathermap.org/img/wn/"
                                   + weatherObject["icon"].toString()
@@ -249,4 +247,18 @@ void WeatherModel::addWeather(QList<Weather*> &forecast)
 QList<Weather *> WeatherModel::weatherList() const
 {
     return m_weatherList;
+}
+
+void WeatherModel::setCity(const QString &newCity)
+{
+    if(m_city == newCity)
+        return;
+    m_city = newCity;
+    emit cityChanged();
+
+}
+
+QString WeatherModel::city() const
+{
+    return m_city;
 }

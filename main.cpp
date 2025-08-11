@@ -15,9 +15,6 @@ int main(int argc, char *argv[])
     WeatherDayModel *weatherDayModel = new WeatherDayModel(weatherModel, &app);
     qmlRegisterSingletonInstance("com.dizarc.WeatherDayModel", 1, 0, "WeatherDayModel", weatherDayModel);
 
-    Weather *weather = new Weather(&app);
-    qmlRegisterSingletonInstance("com.dizarc.Weather", 1, 0, "Weather", weather);
-
     QQmlApplicationEngine engine;
     QObject::connect(
         &engine,
