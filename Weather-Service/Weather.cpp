@@ -71,30 +71,17 @@ void Weather::setTemp(const double &newTemp)
     emit tempChanged();
 }
 
-double Weather::tempMin() const
+double Weather::feelTemp() const
 {
-    return m_tempMin;
+    return m_feelTemp;
 }
 
-void Weather::setTempMin(const double &newTempMin)
+void Weather::setFeelTemp(const double &newFeelTemp)
 {
-    if(m_tempMin == newTempMin)
+    if(m_feelTemp == newFeelTemp)
         return;
-    m_tempMin = newTempMin;
-    emit tempMinChanged();
-}
-
-double Weather::tempMax() const
-{
-    return m_tempMax;
-}
-
-void Weather::setTempMax(const double &newTempMax)
-{
-    if(m_tempMax == newTempMax)
-        return;
-    m_tempMax = newTempMax;
-    emit tempMaxChanged();
+    m_feelTemp = newFeelTemp;
+    emit feelTempChanged();
 }
 
 double Weather::humidity() const

@@ -37,11 +37,12 @@ Rectangle {
         required property url icon
         required property string dateTime
         required property double temp
-        required property double tempMin
-        required property double tempMax
+        required property double feelTemp
         required property double humidity
         required property double wind
         required property int clouds
+
+        required property int index
 
         width: listView.width
         implicitHeight: 100
@@ -73,7 +74,7 @@ Rectangle {
           }
 
           Text {
-            text: weatherItemDelegate.temp + "C"
+            text: weatherItemDelegate.temp + "°C"
 
             Layout.alignment: Qt.AlignVCenter
 

@@ -26,8 +26,7 @@ public:
         iconRole,
         dateTimeRole,
         tempRole,
-        tempMinRole,
-        tempMaxRole,
+        feelTempRole,
         humidityRole,
         windRole,
         cloudsRole

@@ -42,6 +42,7 @@ QHash<int, QByteArray> WeatherDayModel::roleNames() const
     return names;
 }
 
+//TODO: add an update to the day too inside this
 void WeatherDayModel::updateWeatherData()
 {
     beginResetModel();

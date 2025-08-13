@@ -9,8 +9,8 @@
 class WeatherDay : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString day READ day WRITE setDay NOTIFY dayChanged)
-    Q_PROPERTY(QList<QObject*> weatherItems READ weatherItems NOTIFY weatherItemsChanged)
+    Q_PROPERTY(QString day READ day WRITE setDay NOTIFY dayChanged FINAL)
+    Q_PROPERTY(QList<QObject*> weatherItems READ weatherItems NOTIFY weatherItemsChanged FINAL)
 
 public:
     explicit WeatherDay(QObject *parent = nullptr);

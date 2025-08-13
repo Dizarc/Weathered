@@ -30,10 +30,8 @@ QVariant WeatherModel::data(const QModelIndex &index, int role) const
         return weather->dateTime();
     case tempRole:
         return weather->temp();
-    case tempMinRole:
-        return weather->tempMin();
-    case tempMaxRole:
-        return weather->tempMax();
+    case feelTempRole:
+        return weather->feelTemp();
     case humidityRole:
         return weather->humidity();
     case windRole:
@@ -54,8 +52,7 @@ QHash<int, QByteArray> WeatherModel::roleNames() const
     names[iconRole] = "icon";
     names[dateTimeRole] = "dateTime";
     names[tempRole] = "temp";
-    names[tempMinRole] = "tempMin";
-    names[tempMaxRole] = "tempMax";
+    names[feelTempRole] = "feelTemp";
     names[humidityRole] = "humidity";
     names[windRole] = "wind";
     names[cloudsRole] = "clouds";
@@ -118,6 +115,7 @@ void WeatherModel::parseGeoData()
             QString lat = QString::number(entry["lat"].toDouble());
             QString lon = QString::number(entry["lon"].toDouble());
 
+            // TODO: QDEBUG REMOVE
             qDebug() << "name: " << name
                      << "lat: " << lat
                      << "lon: " << lon;
@@ -195,8 +193,7 @@ void WeatherModel::parseWeatherData()
             weather->setDateTime(entry["dt_txt"].toString());
 
             weather->setTemp(mainObject["temp"].toDouble());
-            weather->setTempMin(mainObject["temp_min"].toDouble());
-            weather->setTempMax(mainObject["temp_max"].toDouble());
+            weather->setFeelTemp(mainObject["feels_like"].toDouble());
             weather->setHumidity(mainObject["humidity"].toDouble());
             weather->setWind(windObject["speed"].toDouble());
             weather->setClouds(cloudsObject["all"].toInt());

@@ -8,16 +8,15 @@ class Weather : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged);
-    Q_PROPERTY(QString desc READ desc WRITE setDesc NOTIFY descChanged);
-    Q_PROPERTY(QUrl icon READ icon WRITE setIcon NOTIFY iconChanged);
-    Q_PROPERTY(QString dateTime READ dateTime WRITE setDateTime NOTIFY dateTimeChanged);
-    Q_PROPERTY(double temp READ temp WRITE setTemp NOTIFY tempChanged);
-    Q_PROPERTY(double tempMin READ tempMin WRITE setTempMin NOTIFY tempMinChanged);
-    Q_PROPERTY(double tempMax READ tempMax WRITE setTempMax NOTIFY tempMaxChanged);
-    Q_PROPERTY(double humidity READ humidity WRITE setHumidity NOTIFY humidityChanged);
-    Q_PROPERTY(double wind READ wind WRITE setWind NOTIFY windChanged);
-    Q_PROPERTY(int clouds READ clouds WRITE setClouds NOTIFY cloudsChanged);
+    Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged FINAL);
+    Q_PROPERTY(QString desc READ desc WRITE setDesc NOTIFY descChanged FINAL);
+    Q_PROPERTY(QUrl icon READ icon WRITE setIcon NOTIFY iconChanged FINAL);
+    Q_PROPERTY(QString dateTime READ dateTime WRITE setDateTime NOTIFY dateTimeChanged FINAL);
+    Q_PROPERTY(double temp READ temp WRITE setTemp NOTIFY tempChanged FINAL);
+    Q_PROPERTY(double feelTemp READ feelTemp WRITE setFeelTemp NOTIFY feelTempChanged FINAL);
+    Q_PROPERTY(double humidity READ humidity WRITE setHumidity NOTIFY humidityChanged FINAL);
+    Q_PROPERTY(double wind READ wind WRITE setWind NOTIFY windChanged FINAL);
+    Q_PROPERTY(int clouds READ clouds WRITE setClouds NOTIFY cloudsChanged FINAL);
 
 public:
     explicit Weather(QObject *parent = nullptr);
@@ -37,11 +36,8 @@ public:
     double temp() const;
     void setTemp(const double &newTemp);
 
-    double tempMin() const;
-    void setTempMin(const double &newTempMin);
-
-    double tempMax() const;
-    void setTempMax(const double &newTempMax);
+    double feelTemp() const;
+    void setFeelTemp(const double &newFeelTemp);
 
     double humidity() const;
     void setHumidity(const double &newHumidity);
@@ -58,8 +54,7 @@ signals:
     void iconChanged();
     void dateTimeChanged();
     void tempChanged();
-    void tempMinChanged();
-    void tempMaxChanged();
+    void feelTempChanged();
     void humidityChanged();
     void windChanged();
     void cloudsChanged();
@@ -70,8 +65,7 @@ private:
     QUrl m_icon;
     QString m_dateTime;
     double m_temp;
-    double m_tempMin;
-    double m_tempMax;
+    double m_feelTemp;
     double m_humidity;
     double m_wind;
     int m_clouds;
