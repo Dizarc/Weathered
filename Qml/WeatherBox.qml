@@ -32,7 +32,7 @@ Column {
   SwipeView {
     id: swipeView
 
-    width: 500
+    width: 1000
     height: 1000
 
     clip: true

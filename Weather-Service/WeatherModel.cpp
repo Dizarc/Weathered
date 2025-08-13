@@ -192,8 +192,8 @@ void WeatherModel::parseWeatherData()
 
             weather->setDateTime(entry["dt_txt"].toString());
 
-            weather->setTemp(mainObject["temp"].toDouble());
-            weather->setFeelTemp(mainObject["feels_like"].toDouble());
+            weather->setTemp(std::round(mainObject["temp"].toDouble() * 10.0) / 10.0);
+            weather->setFeelTemp(std::round(mainObject["feels_like"].toDouble() * 10.0) / 10.0);
             weather->setHumidity(mainObject["humidity"].toDouble());
             weather->setWind(windObject["speed"].toDouble());
             weather->setClouds(cloudsObject["all"].toInt());

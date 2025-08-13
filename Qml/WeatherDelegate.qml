@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 
+import Qt.labs.qmlmodels
+
 Rectangle {
   id: weatherDelegate
 
@@ -24,62 +26,65 @@ Rectangle {
     ListView {
       id: listView
 
-      width: parent.width
+      width: parent.width - 40
       height: parent.height - 40
 
+      orientation: ListView.Horizontal
+
       model: weatherDelegate.weatherItems
+      delegate: chooser
 
-      delegate: Rectangle {
-        id: weatherItemDelegate
+      DelegateChooser {
+        id: chooser
 
-        required property string city
-        required property string desc
-        required property url icon
-        required property string dateTime
-        required property double temp
-        required property double feelTemp
-        required property double humidity
-        required property double wind
-        required property int clouds
+        // TODO: Create the delegate for current weather
+        //DelegateChoice {
+          //row: 0
+        //}
 
-        required property int index
+        DelegateChoice {
+          Rectangle {
+            id: weatherItemDelegate
 
-        width: listView.width
-        implicitHeight: 100
+            required property url icon
+            required property string dateTime
+            required property double temp
 
-        clip: true
+            implicitWidth: 50
+            implicitHeight: 100
 
-        RowLayout {
-          anchors.fill: parent
+            clip: true
 
-          spacing: 5
+            ColumnLayout {
+              anchors.fill: parent
 
-          Image {
-            source: weatherItemDelegate.icon
+              spacing: 5
 
-            Layout.alignment: Qt.AlignVCenter
+              Text {
+                text: weatherItemDelegate.dateTime.split(" ")[1].slice(0, 5)
 
-            sourceSize.width: 100
-            fillMode: Image.PreserveAspectFit
-          }
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                font. capitalization: Font.Capitalize
+                font.pointSize: 11
+                width: 50
+              }
 
-          Text {
-            text: weatherItemDelegate.dateTime
+              Image {
+                source: weatherItemDelegate.icon
 
-            Layout.alignment: Qt.AlignVCenter
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                sourceSize.width: 30
+                fillMode: Image.PreserveAspectFit
+              }
 
-            font. capitalization: Font.Capitalize
-            font.pointSize: 11
-            width: 100
-          }
+              Text {
+                text: weatherItemDelegate.temp + "°C"
 
-          Text {
-            text: weatherItemDelegate.temp + "°C"
-
-            Layout.alignment: Qt.AlignVCenter
-
-            font.pointSize: 11
-            width: 100
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                font.pointSize: 10
+                width: 50
+              }
+            }
           }
         }
       }
