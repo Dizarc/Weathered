@@ -8,7 +8,6 @@ class Weather : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged FINAL);
     Q_PROPERTY(QString desc READ desc WRITE setDesc NOTIFY descChanged FINAL);
     Q_PROPERTY(QUrl icon READ icon WRITE setIcon NOTIFY iconChanged FINAL);
     Q_PROPERTY(QString dateTime READ dateTime WRITE setDateTime NOTIFY dateTimeChanged FINAL);
@@ -16,13 +15,10 @@ class Weather : public QObject
     Q_PROPERTY(double feelTemp READ feelTemp WRITE setFeelTemp NOTIFY feelTempChanged FINAL);
     Q_PROPERTY(double humidity READ humidity WRITE setHumidity NOTIFY humidityChanged FINAL);
     Q_PROPERTY(double wind READ wind WRITE setWind NOTIFY windChanged FINAL);
-    Q_PROPERTY(int clouds READ clouds WRITE setClouds NOTIFY cloudsChanged FINAL);
+    Q_PROPERTY(double clouds READ clouds WRITE setClouds NOTIFY cloudsChanged FINAL);
 
 public:
     explicit Weather(QObject *parent = nullptr);
-
-    QString city() const;
-    void setCity(const QString &newCity);
 
     QString desc() const;
     void setDesc(const QString &newDesc);
@@ -45,11 +41,10 @@ public:
     double wind() const;
     void setWind(const double &newWind);
 
-    int clouds() const;
-    void setClouds(const int &newClouds);
+    double clouds() const;
+    void setClouds(const double &newClouds);
 
 signals:
-    void cityChanged();
     void descChanged();
     void iconChanged();
     void dateTimeChanged();
@@ -60,7 +55,6 @@ signals:
     void cloudsChanged();
 
 private:
-    QString m_city;
     QString m_desc;
     QUrl m_icon;
     QString m_dateTime;

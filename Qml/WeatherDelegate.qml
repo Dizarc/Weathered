@@ -14,7 +14,7 @@ Rectangle {
     spacing: 10
 
     Text {
-      font.pixelSize: 15
+      font.pixelSize: 20
       verticalAlignment: Text.AlignBottom
 
       text: {
@@ -23,68 +23,161 @@ Rectangle {
       }
     }
 
-    ListView {
-      id: listView
+    Loader {
+      sourceComponent: currentWeatherDelegate
 
-      width: parent.width - 40
-      height: parent.height - 40
+      onLoaded: {
+        if(item && weatherDelegate.weatherItems.length > 0)
+          item.weatherItem = weatherDelegate.weatherItems[0];
+      }
+    }
+
+    ListView {
+      id: forecastListView
+
+      width: parent.width
+      height: 120
 
       orientation: ListView.Horizontal
+      spacing: 10
 
-      model: weatherDelegate.weatherItems
-      delegate: chooser
+      model: weatherDelegate.weatherItems.length > 1 ?
+               weatherDelegate.weatherItems.slice(1) : []
 
-      DelegateChooser {
-        id: chooser
+      delegate: forecastDelegate
 
-        // TODO: Create the delegate for current weather
-        //DelegateChoice {
-          //row: 0
-        //}
+    }
 
-        DelegateChoice {
-          Rectangle {
-            id: weatherItemDelegate
+    Component {
+      id: currentWeatherDelegate
 
-            required property url icon
-            required property string dateTime
-            required property double temp
+      Rectangle {
+        id: weatherMainItemDelegate
 
-            implicitWidth: 50
-            implicitHeight: 100
+        property var weatherItem: null
 
-            clip: true
+        implicitWidth: 350
+        implicitHeight: 180
 
-            ColumnLayout {
-              anchors.fill: parent
+        clip: true
 
-              spacing: 5
+        GridLayout {
+          anchors.fill: parent
 
-              Text {
-                text: weatherItemDelegate.dateTime.split(" ")[1].slice(0, 5)
+          columnSpacing: 10
+          rowSpacing: 0
 
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                font. capitalization: Font.Capitalize
-                font.pointSize: 11
-                width: 50
-              }
+          columns: 2
+          rows: 5
 
-              Image {
-                source: weatherItemDelegate.icon
+          Image {
+            source: weatherMainItemDelegate.weatherItem.icon
+            sourceSize.width: 100
+            fillMode: Image.PreserveAspectFit
+          }
 
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                sourceSize.width: 30
-                fillMode: Image.PreserveAspectFit
-              }
+          Text {
+            text: weatherMainItemDelegate.weatherItem.temp + "°C"
+            width: 50
+            font.pointSize: 20
+            font.weight: Font.DemiBold
+          }
 
-              Text {
-                text: weatherItemDelegate.temp + "°C"
+          Text {
+            text: Qt.formatDate(new Date(), "yyyy-MM-dd") === weatherDelegate.day ?
+                    qsTr("Now") : weatherMainItemDelegate.weatherItem.dateTime.split(" ")[1].slice(0, 5)
+            width: 50
+            font.pointSize: 11
+            font.weight: Font.Light
 
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                font.pointSize: 10
-                width: 50
-              }
-            }
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+          }
+
+          Text {
+            text: "Feels like " + weatherMainItemDelegate.weatherItem.feelTemp + "°C"
+            font.pointSize: 12
+            width: 50
+          }
+
+          Text {
+            text: weatherMainItemDelegate.weatherItem.desc
+            width: 50
+            font.capitalization: Font.Capitalize
+            font.pointSize: 12
+
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+          }
+
+          Text {
+            text: "Humidity " + weatherMainItemDelegate.weatherItem.humidity + "%"
+            width: 50
+            font.pointSize: 12
+          }
+
+          Text {
+            text: "Wind speed " + weatherMainItemDelegate.weatherItem.wind + " meters/sec"
+            width: 50
+            font.pointSize: 12
+
+            Layout.column: 1
+            Layout.row: 3
+          }
+
+          Text {
+            text: "Cloudiness " + weatherMainItemDelegate.weatherItem.clouds + "%"
+            width: 50
+            font.pointSize: 12
+
+            Layout.column: 1
+            Layout.row: 4
+          }
+        }
+      }
+    }
+
+    Component {
+      id: forecastDelegate
+
+      Rectangle {
+        id: weatherItemDelegate
+
+        required property url icon
+        required property string dateTime
+        required property double temp
+
+        implicitWidth: 50
+        implicitHeight: 100
+
+        clip: true
+
+        ColumnLayout {
+          anchors.fill: parent
+
+          spacing: 5
+
+          Text {
+            text: weatherItemDelegate.dateTime.split(" ")[1].slice(0, 5)
+            width: 50
+            font.pointSize: 11
+
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+          }
+
+          Image {
+            source: weatherItemDelegate.icon
+            sourceSize.width: 30
+            fillMode: Image.PreserveAspectFit
+
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+          }
+
+          Text {
+            text: weatherItemDelegate.temp + "°C"
+            width: 50
+            font.weight: Font.DemiBold
+            font.pointSize: 10
+
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
           }
         }
       }

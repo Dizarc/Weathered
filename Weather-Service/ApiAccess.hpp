@@ -9,16 +9,10 @@ namespace ApiAccess {
     inline const QString WEATHER_URL = "https://api.openweathermap.org/data/2.5/";
     inline const QString UNITS = "metric";
 
-    inline const QString getApiKey() {
-        return QProcessEnvironment::systemEnvironment()
-        .value("API_KEY", "");
-    }
+    inline const QString API_KEY = QProcessEnvironment::systemEnvironment().value("API_KEY", "");
 
     // City & Country(ISO 3166 code) divided by comma
-    inline const QString getApiCityCountry() {
-        return QProcessEnvironment::systemEnvironment()
-        .value("API_CITY_COUNTRY", "");
-    }
+    inline const QString API_CITY_COUNTRY = QProcessEnvironment::systemEnvironment().value("API_CITY_COUNTRY", "");
 }
 
 #endif // APIACCESS_H

@@ -17,7 +17,7 @@ Column {
     text: qsTr("Refresh weather")
     onClicked: {
       WeatherModel.fetchGeoData();
-    } // Only for testing
+    } // TODO: Remove this after testing
   }
 
   Text {
@@ -25,7 +25,8 @@ Column {
 
     text: WeatherModel.city
     font.weight: Font.Light
-    font.pixelSize: 30
+    font.pixelSize: 40
+
     verticalAlignment: Text.AlignBottom
   }
 

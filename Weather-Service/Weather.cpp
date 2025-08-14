@@ -6,19 +6,6 @@ Weather::Weather(QObject *parent)
 
 }
 
-QString Weather::city() const
-{
-    return m_city;
-}
-
-void Weather::setCity(const QString &newCity)
-{
-    if(m_city == newCity)
-        return;
-    m_city = newCity;
-    emit cityChanged();
-}
-
 QString Weather::desc() const
 {
     return m_desc;
@@ -110,12 +97,12 @@ void Weather::setWind(const double &newWind)
     emit windChanged();
 }
 
-int Weather::clouds() const
+double Weather::clouds() const
 {
     return m_clouds;
 }
 
-void Weather::setClouds(const int &newClouds)
+void Weather::setClouds(const double &newClouds)
 {
     if(m_clouds == newClouds)
         return;

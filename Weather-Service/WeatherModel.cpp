@@ -20,8 +20,6 @@ QVariant WeatherModel::data(const QModelIndex &index, int role) const
     Weather *weather = m_weatherList[index.row()];
 
     switch(role) {
-    case cityRole:
-        return weather->city();
     case descRole:
         return weather->desc();
     case iconRole:
@@ -47,7 +45,6 @@ QHash<int, QByteArray> WeatherModel::roleNames() const
 {
     QHash<int, QByteArray> names;
 
-    names[cityRole] = "city";
     names[descRole] = "desc";
     names[iconRole] = "icon";
     names[dateTimeRole] = "dateTime";
@@ -60,18 +57,13 @@ QHash<int, QByteArray> WeatherModel::roleNames() const
     return names;
 }
 
-/*
-TODO: WeatherModel::fetchGeoData()
-    Change the way it gets the values for the API stuff because of a comment in docs:
-    "However, note that repeated calls to this function will recreate the QProcessEnvironment object, which is a non-trivial operation"
-*/
 void WeatherModel::fetchGeoData()
 {
-    if(ApiAccess::getApiKey().isEmpty()) {
+    if(ApiAccess::API_KEY.isEmpty()) {
         qWarning() << "Environmental variable \"API_KEY\" is empty!";
         return;
     }
-    if(ApiAccess::getApiCityCountry().isEmpty()) {
+    if(ApiAccess::API_CITY_COUNTRY.isEmpty()) {
         qWarning() << "Environmental variable \"API_CITY_COUNTRY\" is empty!";
         return;
     }
@@ -84,9 +76,9 @@ void WeatherModel::fetchGeoData()
 
     QUrlQuery query;
 
-    query.addQueryItem("q", ApiAccess::getApiCityCountry());
+    query.addQueryItem("q", ApiAccess::API_CITY_COUNTRY);
     query.addQueryItem("limit", QString::number(1)); // limit to one place
-    query.addQueryItem("appid", ApiAccess::getApiKey());
+    query.addQueryItem("appid", ApiAccess::API_KEY);
 
     m_geoReply = m_manager->get(QNetworkRequest(ApiAccess::GEOCODE_URL + "direct?" + query.toString()));
 
@@ -115,11 +107,6 @@ void WeatherModel::parseGeoData()
             QString lat = QString::number(entry["lat"].toDouble());
             QString lon = QString::number(entry["lon"].toDouble());
 
-            // TODO: QDEBUG REMOVE
-            qDebug() << "name: " << name
-                     << "lat: " << lat
-                     << "lon: " << lon;
-
             setCity(name);
             emit coordinatesReady(lat, lon);
         }
@@ -144,7 +131,7 @@ void WeatherModel::fetchWeatherData(const QString lat, const QString lon)
     query.addQueryItem("lat", lat);
     query.addQueryItem("lon", lon);
     query.addQueryItem("units", ApiAccess::UNITS);
-    query.addQueryItem("appid", ApiAccess::getApiKey());
+    query.addQueryItem("appid", ApiAccess::API_KEY);
 
     m_weatherReply = m_manager->get(QNetworkRequest(ApiAccess::WEATHER_URL + "forecast?" + query.toString()));
 
@@ -183,8 +170,6 @@ void WeatherModel::parseWeatherData()
 
             Weather *weather = new Weather(this);
 
-            weather->setCity(city());
-
             weather->setDesc(weatherObject["description"].toString());
             weather->setIcon(QUrl("https://openweathermap.org/img/wn/"
                                   + weatherObject["icon"].toString()
@@ -196,7 +181,7 @@ void WeatherModel::parseWeatherData()
             weather->setFeelTemp(std::round(mainObject["feels_like"].toDouble() * 10.0) / 10.0);
             weather->setHumidity(mainObject["humidity"].toDouble());
             weather->setWind(windObject["speed"].toDouble());
-            weather->setClouds(cloudsObject["all"].toInt());
+            weather->setClouds(cloudsObject["all"].toDouble());
 
             forecastList << weather;
         }

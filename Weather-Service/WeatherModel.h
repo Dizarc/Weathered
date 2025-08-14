@@ -21,8 +21,7 @@ class WeatherModel : public QAbstractListModel
 
 public:
     enum Roles {
-        cityRole = Qt::UserRole + 1,
-        descRole,
+        descRole = Qt::UserRole + 1,
         iconRole,
         dateTimeRole,
         tempRole,
