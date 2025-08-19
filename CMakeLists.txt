@@ -45,6 +45,10 @@ target_link_libraries(appWeathered
     PRIVATE Qt6::Quick
 )
 
+# TODO: add these for llama support?
+# qt_add_library(llama.cpp)
+# add_subdirectory(external/llama.cpp)
+
 include(GNUInstallDirs)
 install(TARGETS appWeathered
     BUNDLE DESTINATION .

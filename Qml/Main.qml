@@ -24,6 +24,7 @@ Window {
       Layout.fillWidth: true
     }
 
+    // TODO: Add Quote box for the quotes from QuoteManager
     Text {
       Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
       text: qsTr("The quote will go here")

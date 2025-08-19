@@ -1,9 +1,11 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
+#include "Weather-Service/Weather.h"
 #include "Weather-Service/WeatherModel.h"
 #include "Weather-Service/WeatherDayModel.h"
-#include "Weather-Service/Weather.h"
+
+#include "Quote-Service/QuoteManager.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,6 +16,9 @@ int main(int argc, char *argv[])
 
     WeatherDayModel *weatherDayModel = new WeatherDayModel(weatherModel, &app);
     qmlRegisterSingletonInstance("com.dizarc.WeatherDayModel", 1, 0, "WeatherDayModel", weatherDayModel);
+
+    QuoteManager *quoteManager = new QuoteManager(&app);
+    qmlRegisterSingletonInstance("com.dizarc.QuoteManager", 1, 0, "QuoteManager", quoteManager);
 
     QQmlApplicationEngine engine;
     QObject::connect(
