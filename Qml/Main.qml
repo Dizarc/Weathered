@@ -25,10 +25,12 @@ Window {
     }
 
     // TODO: Add Quote box for the quotes from QuoteManager
-    Text {
-      Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-      text: qsTr("The quote will go here")
-      font.pointSize: 15
+    QuoteBox {
+
+      height: 500
+      width: 200
+      anchors.bottom: root.bottom
+      //anchors.horizontalCenter: root.width
     }
 
   }

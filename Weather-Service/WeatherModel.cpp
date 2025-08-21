@@ -59,11 +59,11 @@ QHash<int, QByteArray> WeatherModel::roleNames() const
 
 void WeatherModel::fetchGeoData()
 {
-    if(ApiAccess::API_KEY.isEmpty()) {
+    if(WeatherAPI::API_KEY.isEmpty()) {
         qWarning() << "Environmental variable \"API_KEY\" is empty!";
         return;
     }
-    if(ApiAccess::API_CITY_COUNTRY.isEmpty()) {
+    if(WeatherAPI::API_CITY_COUNTRY.isEmpty()) {
         qWarning() << "Environmental variable \"API_CITY_COUNTRY\" is empty!";
         return;
     }
@@ -76,11 +76,11 @@ void WeatherModel::fetchGeoData()
 
     QUrlQuery query;
 
-    query.addQueryItem("q", ApiAccess::API_CITY_COUNTRY);
+    query.addQueryItem("q", WeatherAPI::API_CITY_COUNTRY);
     query.addQueryItem("limit", QString::number(1)); // limit to one place
-    query.addQueryItem("appid", ApiAccess::API_KEY);
+    query.addQueryItem("appid", WeatherAPI::API_KEY);
 
-    m_geoReply = m_manager->get(QNetworkRequest(ApiAccess::GEOCODE_URL + "direct?" + query.toString()));
+    m_geoReply = m_manager->get(QNetworkRequest(WeatherAPI::GEOCODE_URL + "direct?" + query.toString()));
 
     connect(m_geoReply, &QNetworkReply::finished, this, &WeatherModel::parseGeoData);
 }
@@ -130,10 +130,10 @@ void WeatherModel::fetchWeatherData(const QString lat, const QString lon)
 
     query.addQueryItem("lat", lat);
     query.addQueryItem("lon", lon);
-    query.addQueryItem("units", ApiAccess::UNITS);
-    query.addQueryItem("appid", ApiAccess::API_KEY);
+    query.addQueryItem("units", WeatherAPI::UNITS);
+    query.addQueryItem("appid", WeatherAPI::API_KEY);
 
-    m_weatherReply = m_manager->get(QNetworkRequest(ApiAccess::WEATHER_URL + "forecast?" + query.toString()));
+    m_weatherReply = m_manager->get(QNetworkRequest(WeatherAPI::WEATHER_URL + "forecast?" + query.toString()));
 
     connect(m_weatherReply, &QNetworkReply::finished, this, &WeatherModel::parseWeatherData);
 }

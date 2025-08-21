@@ -24,9 +24,9 @@ void QuoteManager::setQuote(const QString &newQuote)
 
 void QuoteManager::generateQuote()
 {
-    //TODO: Find out if this is how llama.cpp receives requests
+    //TODO: Create an amazing prompt
     QJsonObject payload;
-    payload["prompt"] = "";
+    payload["prompt"] = "write me a short happy quote";
     payload["n_predict"] = 50;
 
     QJsonDocument doc(payload);
@@ -37,15 +37,34 @@ void QuoteManager::generateQuote()
     connect(m_manager, &QNetworkAccessManager::finished, this, &QuoteManager::handleReply);
 }
 
+// TODO: get the reply back from the LM
+// (possible issue of crash is the fact that handleReply needs a QNetworkReply inside it)
 void QuoteManager::handleReply()
 {
     if(m_reply->error() == QNetworkReply::NoError) {
-        QByteArray response = m_reply->readAll();
+        QByteArray data = m_reply->readAll();
 
-        // TODO: Find how llama.cpp answers, parse that data, and change the quote for the QML side.
+        QJsonParseError parseError;
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(data, &parseError);
+
+        if(parseError.error != QJsonParseError::NoError) {
+            qWarning() << "Model JSON parse error: " << parseError.errorString();
+            return;
+        }
+
+        QJsonObject rootObject = jsonDocument.object();
+
+        QString content = rootObject["content"].toString();
+
+        if(!content.isEmpty()) {
+            setQuote(content.trimmed());
+            emit quoteChanged();
+            qDebug() << content;
+        }
 
     } else
         qWarning() << "Error on LM request: " << m_reply->errorString();
 
     m_reply->deleteLater();
+    m_reply = nullptr;
 }

@@ -6,7 +6,10 @@
 #include <QNetworkRequest>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QObject>
+
+#include "Weather-Service/ApiAccess.hpp"
 
 class QuoteManager : public QObject
 {
@@ -29,10 +32,8 @@ signals:
 private:
     QString m_quote;
     QNetworkAccessManager *m_manager;
-    QNetworkRequest *m_request = new QNetworkRequest(URL);
+    QNetworkRequest *m_request = new QNetworkRequest(ModelAPI::LM_URL);
     QNetworkReply *m_reply = nullptr;
-
-    QUrl const URL; // TODO: Find the URL for llama.cpp
 };
 
 #endif // QUOTEMANAGER_H

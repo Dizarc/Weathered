@@ -28,6 +28,8 @@ qt_add_qml_module(appWeathered
 
         Qml/WeatherBox.qml
         Qml/WeatherDelegate.qml
+
+        Qml/QuoteBox.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -44,10 +46,6 @@ set_target_properties(appWeathered PROPERTIES
 target_link_libraries(appWeathered
     PRIVATE Qt6::Quick
 )
-
-# TODO: add these for llama support?
-# qt_add_library(llama.cpp)
-# add_subdirectory(external/llama.cpp)
 
 include(GNUInstallDirs)
 install(TARGETS appWeathered
