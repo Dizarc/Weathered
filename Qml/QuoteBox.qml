@@ -12,7 +12,7 @@ Column {
     width: 100
     height: 20
 
-    text: qsTr("Refresh weather")
+    text: qsTr("Get Quote")
     onClicked: {
       QuoteManager.generateQuote();
     } // TODO: Remove this after testing

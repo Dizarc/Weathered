@@ -25,7 +25,7 @@ public slots:
     void generateQuote();
 
 private slots:
-    void handleReply();
+    void handleReply(QNetworkReply *reply);
 signals:
     void quoteChanged();
 
@@ -33,7 +33,6 @@ private:
     QString m_quote;
     QNetworkAccessManager *m_manager;
     QNetworkRequest *m_request = new QNetworkRequest(ModelAPI::LM_URL);
-    QNetworkReply *m_reply = nullptr;
 };
 
 #endif // QUOTEMANAGER_H

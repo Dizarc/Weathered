@@ -16,7 +16,7 @@ namespace WeatherAPI {
 }
 
 namespace ModelAPI {
-    inline const QString LM_URL = "http://127.0.0.1:8080/completion";
+    inline const QString LM_URL = "http://127.0.0.1:8080/v1/chat/completions";
 }
 
 #endif // APIACCESS_H

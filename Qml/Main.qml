@@ -24,7 +24,6 @@ Window {
       Layout.fillWidth: true
     }
 
-    // TODO: Add Quote box for the quotes from QuoteManager
     QuoteBox {
 
       height: 500
