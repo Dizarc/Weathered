@@ -19,7 +19,8 @@ Column {
   }
 
   Text {
-    //text: QuoteManager.quote();
+    id: quoteText
+    text: QuoteManager.quote;
     font.pointSize: 15
   }
 }

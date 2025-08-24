@@ -4,10 +4,13 @@ QuoteManager::QuoteManager(QObject *parent)
     : QObject{parent}
 {
     m_manager = new QNetworkAccessManager(this);
+    connect(m_manager, &QNetworkAccessManager::finished, this, &QuoteManager::handleReply);
 
     m_request->setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-}
 
+    // Some models incorporate their thinking into the answer, to remove it a regex is used.
+    m_thinkTag = QRegularExpression("<think>[\\s\\S]*?</think>");
+}
 
 QString QuoteManager::quote() const
 {
@@ -20,6 +23,11 @@ void QuoteManager::setQuote(const QString &newQuote)
         return;
     m_quote = newQuote;
     emit quoteChanged();
+}
+
+QRegularExpression QuoteManager::thinkTag() const
+{
+    return m_thinkTag;
 }
 
 void QuoteManager::generateQuote()
@@ -38,23 +46,18 @@ void QuoteManager::generateQuote()
     });
 
     QJsonObject payload;
-    payload["model"] = "Qwen/Qwen3-0.6B-GGUF"; //TODO: get this from API
     payload["messages"] = messages;
     payload["temperature"] = 0.7;
-    payload["max_tokens"] = 100;
+    payload["max_tokens"] = 300;
 
     QJsonDocument doc(payload);
     QByteArray data = doc.toJson();
 
     m_manager->post(*m_request, data);
-
-    connect(m_manager, &QNetworkAccessManager::finished, this, &QuoteManager::handleReply);
 }
 
 void QuoteManager::handleReply(QNetworkReply *reply)
 {
-
-    //TODO: Fix the models answer because now it incorporates its thinking and not just the quote.
     if(reply->error() == QNetworkReply::NoError) {
         QByteArray data = reply->readAll();
 
@@ -74,14 +77,14 @@ void QuoteManager::handleReply(QNetworkReply *reply)
 
         QJsonObject choice = choices.at(0).toObject();
         QJsonObject message = choice["message"].toObject();
-        QString content = message["content"].toString();
+        QString answer = message["content"].toString();
 
-        if(content.isEmpty())
+        if(answer.isEmpty())
             return;
 
-        setQuote(content.trimmed());
-        emit quoteChanged();
-        qDebug() << content;
+        answer.remove(thinkTag());
+
+        setQuote(answer.trimmed());
 
     } else
         qWarning() << "Error on LM request: " << reply->errorString();
