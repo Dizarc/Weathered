@@ -15,13 +15,19 @@ Window {
 
     anchors.fill: parent
 
-    columns: 1
+    columns: 2
     rows: 2
 
     WeatherBox {
       Layout.alignment: Qt.AlignLeft | Qt.AlignTop
       Layout.fillHeight: true
       Layout.fillWidth: true
+    }
+
+    ClothingBox {
+      Layout.alignment: Qt.AlignRight | Qt.AlignTop
+      height: 500
+      width: 300
     }
 
     QuoteBox {

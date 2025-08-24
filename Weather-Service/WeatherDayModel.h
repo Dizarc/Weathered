@@ -7,6 +7,7 @@
 #include "Weather-Service/WeatherModel.h"
 #include "Weather-Service/WeatherDay.h"
 
+// This class exists to separate the weather in each day.
 class WeatherDayModel : public QAbstractListModel
 {
     Q_OBJECT

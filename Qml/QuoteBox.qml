@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-import com.dizarc.QuoteManager
+import com.dizarc.LmManager
 
 Column {
   id: quoteBox
@@ -14,13 +14,12 @@ Column {
 
     text: qsTr("Get Quote")
     onClicked: {
-      QuoteManager.generateQuote();
+      LmManager.generateQuote();
     } // TODO: Remove this after testing
   }
 
   Text {
-    id: quoteText
-    text: QuoteManager.quote;
+    text: LmManager.quote
     font.pointSize: 15
   }
 }

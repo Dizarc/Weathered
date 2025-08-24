@@ -5,7 +5,7 @@
 #include "Weather-Service/WeatherModel.h"
 #include "Weather-Service/WeatherDayModel.h"
 
-#include "Quote-Service/QuoteManager.h"
+#include "Quote-Service/lmManager.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
     WeatherDayModel *weatherDayModel = new WeatherDayModel(weatherModel, &app);
     qmlRegisterSingletonInstance("com.dizarc.WeatherDayModel", 1, 0, "WeatherDayModel", weatherDayModel);
 
-    QuoteManager *quoteManager = new QuoteManager(&app);
-    qmlRegisterSingletonInstance("com.dizarc.QuoteManager", 1, 0, "QuoteManager", quoteManager);
+    LmManager *lmManager = new LmManager(&app);
+    qmlRegisterSingletonInstance("com.dizarc.LmManager", 1, 0, "LmManager", lmManager);
 
     QQmlApplicationEngine engine;
     QObject::connect(

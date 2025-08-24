@@ -17,7 +17,7 @@ qt_add_executable(appWeathered
     Weather-Service/WeatherDayModel.h Weather-Service/WeatherDayModel.cpp
     Weather-Service/WeatherDay.h Weather-Service/WeatherDay.cpp
 
-    Quote-Service/QuoteManager.h Quote-Service/QuoteManager.cpp
+    Quote-Service/lmManager.h Quote-Service/lmManager.cpp
 )
 
 qt_add_qml_module(appWeathered
@@ -30,6 +30,8 @@ qt_add_qml_module(appWeathered
         Qml/WeatherDelegate.qml
 
         Qml/QuoteBox.qml
+
+        Qml/ClothingBox.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
