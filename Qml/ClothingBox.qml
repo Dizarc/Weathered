@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-import com.dizarc.LmManager
+import com.dizarc.AppController
 
 Column {
   id: clothingBox
@@ -14,12 +14,14 @@ Column {
 
     text: qsTr("Get Clothing suggestion")
     onClicked: {
-      LmManager.generateSuggestion("Cloudy",26.7, 25.6, 40.1, 2.2, 70);
+      AppController.lmManager.generateSuggestion("Cloudy",26.7, 25.6, 40.1, 2.2, 70);
     } // TODO: Get these variables from the current day, current hour.
   }
 
   Text {
-    text: LmManager.suggestion
+    text: AppController.lmManager.suggestion.length > 0 ? AppController.lmManager.suggestion
+          : "Loading..."
     font.pointSize: 12
+    wrapMode: Text.WordWrap
   }
 }

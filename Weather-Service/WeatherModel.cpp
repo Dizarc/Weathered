@@ -57,6 +57,38 @@ QHash<int, QByteArray> WeatherModel::roleNames() const
     return names;
 }
 
+QList<Weather *> WeatherModel::weatherList() const
+{
+    return m_weatherList;
+}
+
+void WeatherModel::setCity(const QString &newCity)
+{
+    if(m_city == newCity)
+        return;
+    m_city = newCity;
+    emit cityChanged();
+
+}
+
+QString WeatherModel::city() const
+{
+    return m_city;
+}
+
+Weather *WeatherModel::currentWeather() const
+{
+    return m_currentWeather;
+}
+
+void WeatherModel::setCurrentWeather(Weather *newCurrentWeather)
+{
+    if (m_currentWeather == newCurrentWeather)
+        return;
+    m_currentWeather = newCurrentWeather;
+    emit currentWeatherChanged();
+}
+
 void WeatherModel::fetchGeoData()
 {
     if(WeatherAPI::API_KEY.isEmpty()) {
@@ -186,19 +218,14 @@ void WeatherModel::parseWeatherData()
             forecastList << weather;
         }
 
-        setCurrentWeather(forecastList);
+        clearList();
+        addWeather(forecastList);
     }
     else
         qWarning() << "Error from geocoding API reply: " + m_weatherReply->errorString();
 
     m_weatherReply->deleteLater();
     m_weatherReply = nullptr;
-}
-
-void WeatherModel::setCurrentWeather(QList<Weather*> &forecast)
-{
-    clearList();
-    addWeather(forecast);
 }
 
 void WeatherModel::clearList()
@@ -224,23 +251,4 @@ void WeatherModel::addWeather(QList<Weather*> &forecast)
     m_weatherList.append(forecast);
 
     endInsertRows();
-}
-
-QList<Weather *> WeatherModel::weatherList() const
-{
-    return m_weatherList;
-}
-
-void WeatherModel::setCity(const QString &newCity)
-{
-    if(m_city == newCity)
-        return;
-    m_city = newCity;
-    emit cityChanged();
-
-}
-
-QString WeatherModel::city() const
-{
-    return m_city;
 }

@@ -18,6 +18,7 @@ Window {
     columns: 2
     rows: 2
 
+    //TODO: Change widths and heights later on.
     WeatherBox {
       Layout.alignment: Qt.AlignLeft | Qt.AlignTop
       Layout.fillHeight: true

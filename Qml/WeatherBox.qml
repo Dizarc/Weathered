@@ -2,28 +2,17 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import com.dizarc.WeatherModel
-import com.dizarc.WeatherDayModel
+import com.dizarc.AppController
 
 Column {
   id: myWeatherBox
 
   spacing: 5
 
-  Button {
-    width: 100
-    height: 20
-
-    text: qsTr("Refresh weather")
-    onClicked: {
-      WeatherModel.fetchGeoData();
-    } // TODO: Remove this after testing
-  }
-
   Text {
     id: cityText
 
-    text: WeatherModel.city
+    text: AppController.weatherModel.city
     font.weight: Font.Light
     font.pixelSize: 40
 
@@ -41,7 +30,7 @@ Column {
     currentIndex: 0
 
     Repeater {
-      model: WeatherDayModel
+      model: AppController.weatherDayModel
 
       delegate: WeatherDelegate {
         width: swipeView.width

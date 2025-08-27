@@ -1,8 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 
-import Qt.labs.qmlmodels
-
 Rectangle {
   id: weatherDelegate
 
