@@ -5,9 +5,8 @@ WeatherDayModel::WeatherDayModel(WeatherModel *sourceModel, QObject *parent)
 {
     m_sourceModel = sourceModel;
 
-    connect(m_sourceModel, &WeatherModel::modelReset, this, &WeatherDayModel::updateWeatherData);
-    connect(m_sourceModel, &WeatherModel::rowsInserted, this, &WeatherDayModel::updateWeatherData);
-
+    //TODO: is this correct coding?
+    connect(m_sourceModel, &WeatherModel::currentWeatherChanged, this, &WeatherDayModel::updateWeatherData);
 }
 
 int WeatherDayModel::rowCount(const QModelIndex &parent) const

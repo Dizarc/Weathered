@@ -10,6 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QTimer>
 
 #include "ApiAccess.hpp"
 #include "Weather.h"
@@ -18,7 +19,6 @@ class WeatherModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged FINAL)
-    Q_PROPERTY(Weather* currentWeather READ currentWeather WRITE setCurrentWeather NOTIFY currentWeatherChanged FINAL)
 
 public:
     enum Roles {
@@ -46,6 +46,10 @@ public:
     Weather *currentWeather() const;
     void setCurrentWeather(Weather *newCurrentWeather);
 
+private:
+    void clearList();
+    void addWeather(QList<Weather*> &forecast);
+
 public slots:
     void fetchGeoData();
     void fetchWeatherData(const QString lat, const QString lon);
@@ -54,8 +58,7 @@ private slots:
     void parseGeoData();
     void parseWeatherData();
 
-    void clearList();
-    void addWeather(QList<Weather*> &forecast);
+    void prunePastForecast();
 
 signals:
     void coordinatesReady(const QString lat, const QString lon);
@@ -72,6 +75,8 @@ private:
     QNetworkAccessManager *m_manager;
     QNetworkReply *m_geoReply = nullptr;
     QNetworkReply *m_weatherReply = nullptr;
+
+    QTimer *m_updateTimer;
 };
 
 #endif // WEATHERMODEL_H

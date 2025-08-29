@@ -73,7 +73,7 @@ void LmManager::generateQuote()
 
 void LmManager::generateSuggestion(const QString desc, const double temp, const double feelTemp, const double humidity, const double wind, const double clouds)
 {
-    //TODO: Create better prompts for Suggesting clothes
+    //TODO: Create better prompts for Suggesting clothes + Add city and day variables to take seasons into consideration.
     QJsonArray messages;
 
     messages.append(QJsonObject {

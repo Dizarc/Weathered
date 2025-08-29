@@ -5,6 +5,11 @@ WeatherModel::WeatherModel(QObject *parent) : QAbstractListModel{parent}
     m_manager = new QNetworkAccessManager(this);
 
     connect(this, &WeatherModel::coordinatesReady, this, &WeatherModel::fetchWeatherData);
+
+    m_updateTimer = new QTimer(this);
+    m_updateTimer->setInterval(60000);
+    connect(m_updateTimer, &QTimer::timeout, this, &WeatherModel::prunePastForecast);
+    m_updateTimer->start();
 }
 
 int WeatherModel::rowCount(const QModelIndex &parent) const
@@ -220,6 +225,8 @@ void WeatherModel::parseWeatherData()
 
         clearList();
         addWeather(forecastList);
+
+        prunePastForecast();
     }
     else
         qWarning() << "Error from geocoding API reply: " + m_weatherReply->errorString();
@@ -251,4 +258,40 @@ void WeatherModel::addWeather(QList<Weather*> &forecast)
     m_weatherList.append(forecast);
 
     endInsertRows();
+
+    setCurrentWeather(m_weatherList.at(0));
+}
+
+void WeatherModel::prunePastForecast()
+{
+    if(m_weatherList.isEmpty())
+        return;
+
+    QDateTime now = QDateTime::currentDateTime();
+    int itemsToRemove = 0;
+
+    for(Weather *weather : m_weatherList) {
+        // API provides the dateTime in this format
+        QDateTime itemDateTime = QDateTime::fromString(weather->dateTime(), "yyyy-MM-dd hh:mm:ss");
+
+        // 3 hour window
+        if(itemDateTime.addSecs(10800) < now)
+            itemsToRemove++;
+        else
+            break; // Since API already sends the data sorted
+    }
+
+    if(itemsToRemove > 0) {
+        qDebug() << "Will remove: " << itemsToRemove;
+
+        beginRemoveRows(QModelIndex(), 0, itemsToRemove - 1);
+
+        m_weatherList.remove(0, itemsToRemove);
+        m_weatherList.squeeze();
+
+        endRemoveRows();
+
+        setCurrentWeather(m_weatherList.at(0));
+    }
+
 }
