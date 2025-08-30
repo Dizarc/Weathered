@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QObject>
 #include <QRegularExpression>
+#include <QTimer>
 
 #include "Weather-Service/ApiAccess.hpp"
 
@@ -31,7 +32,9 @@ public:
 
 public slots:
     void generateQuote();
-    void generateSuggestion(const QString desc,
+    void generateSuggestion(const QString city,
+                            const QString desc,
+                            const QString dateTime,
                             const double temp,
                             const double feelTemp,
                             const double humidity,
@@ -40,6 +43,8 @@ public slots:
 
 private slots:
     void handleReply(QNetworkReply *reply);
+
+    void  refreshDailyQuote();
 
 signals:
     void quoteChanged();
@@ -51,6 +56,8 @@ private:
     QNetworkRequest *m_request = new QNetworkRequest(ModelAPI::LM_URL);
 
     QRegularExpression m_thinkTag;
+
+    QTimer *m_dailyQuoteTimer;
 
     QString m_quote;
     QString m_suggestion;

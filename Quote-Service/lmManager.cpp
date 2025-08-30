@@ -8,8 +8,18 @@ LmManager::LmManager(QObject *parent)
 
     m_request->setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    // Some models incorporate their thinking into the answer, to remove it a regex is used.
+    // Some models incorporate their thinking into the answer, use regex to remove it.
     m_thinkTag = QRegularExpression("<think>[\\s\\S]*?</think>");
+
+    m_dailyQuoteTimer = new QTimer(this);
+    m_dailyQuoteTimer->setSingleShot(true);
+    connect(m_dailyQuoteTimer, &QTimer::timeout, this, &LmManager::refreshDailyQuote);
+
+    QDateTime now = QDateTime::currentDateTime();
+    QDateTime midnight(now.date().addDays(1), QTime(0, 0, 0));
+    m_dailyQuoteTimer->start(now.msecsTo(midnight));
+
+    generateQuote();
 }
 
 QRegularExpression LmManager::thinkTag() const
@@ -45,23 +55,27 @@ void LmManager::setSuggestion(const QString &newSuggestion)
 
 void LmManager::generateQuote()
 {
-    //TODO: Create better prompts for quotes
     QJsonArray messages;
 
     messages.append(QJsonObject {
         {"role", "system"},
-        {"content", "You are Qwen, an assistant AI, Your top priority is achieving user fulfilment via helping them with their requests."}
+        {"content", "You are Qwen, a supportive assistant AI. "
+                    "Your main goal is to inspire and uplift users with short motivational messages "
+                    "that are simple, positive, and easy to understand. "
+                    "You should also add a positive emoji at the end of the quote. "
+                    "Provide nothing more than the sentences and the emoji at the end."}
     });
 
     messages.append(QJsonObject {
         {"role", "user"},
-        {"content", "write me a short 2 sentence quote for a person looking to start their day on a happy note"}
+        {"content", "Write a short uplifting quote (no more than 2 sentences) for someone starting their day."
+                    "Keep it positive, encouraging, and easy to read."}
     });
 
     QJsonObject payload;
     payload["messages"] = messages;
-    payload["temperature"] = 0.6;
-    payload["max_tokens"] = 300;
+    payload["temperature"] = 0.8;
+    payload["max_tokens"] = 500;
 
     QJsonDocument doc(payload);
     QByteArray data = doc.toJson();
@@ -71,27 +85,38 @@ void LmManager::generateQuote()
     reply->setProperty("lm_task", static_cast<int>(Task::Quote));
 }
 
-void LmManager::generateSuggestion(const QString desc, const double temp, const double feelTemp, const double humidity, const double wind, const double clouds)
+void LmManager::generateSuggestion(const QString city, const QString desc, const QString dateTime, const double temp, const double feelTemp, const double humidity, const double wind, const double clouds)
 {
-    //TODO: Create better prompts for Suggesting clothes + Add city and day variables to take seasons into consideration.
     QJsonArray messages;
 
     messages.append(QJsonObject {
         {"role", "system"},
-        {"content", "You are Qwen, a stylist assistant AI, "
-                    "Your top priority is achieving user fulfilment via helping users pick out their outfits depending different weather variables."}
+        {"content", "You are Qwen, a stylist assistant AI. "
+                    "Your top priority is the help users choose practical and stylish outfits based on the weather. "
+                    "Never suggest heavy jackets, coats, or boots during summmer unless the temperature is unexpectedly cold. "
+                    "Never suggest light clothing like shorts during winter unless the weather is unusually hot."
+                    "Always provide your answer in plain text only. Do NOT use bold, italics, or markdown formatting. "
+                    "Format your answer in a structured, multi-line way using different labels. "
+                    "Each item should be on a separate line for readability with one extra new line between them. "
+                    "You should also provide clothes for Women and Men separately."}
     });
 
     messages.append(QJsonObject {
         {"role", "user"},
-        {"content", QString("Help me pick out an outfit for the Weather with:\n"
-                            "Description: %1\n"
-                            "Temperature: %2 Celcius\n"
-                            "Feel temperature: %3 Celcius\n"
-                            "Humidity: %4 %\n"
-                            "Wind: %5 meters/seconds\n"
-                            "cloudiness: %6 %")
+        {"content", QString("Suggest an outfit for today's weather and season:\n"
+                            "City: %1\n"
+                            "Description: %2\n"
+                            "Date and Time: %3\n"
+                            "Temperature: %4 Celcius\n"
+                            "Feel temperature: %5 Celcius\n"
+                            "Humidity: %6 %\n"
+                            "Wind: %7 meters/seconds\n"
+                            "cloudiness: %8 %\n"
+                            "The outfit should be practical, comfortable, and suitable "
+                            "for the current city and the date (take into consideration if its summer, winter, autumn, or spring).")
+                        .arg(city)
                         .arg(desc)
+                        .arg(dateTime)
                         .arg(QString::number(temp))
                         .arg(QString::number(feelTemp))
                         .arg(QString::number(humidity))
@@ -101,8 +126,8 @@ void LmManager::generateSuggestion(const QString desc, const double temp, const 
 
     QJsonObject payload;
     payload["messages"] = messages;
-    payload["temperature"] = 0.8;
-    payload["max_tokens"] = 500;
+    payload["temperature"] = 0.7;
+    payload["max_tokens"] = 1000;
 
     QJsonDocument doc(payload);
     QByteArray data = doc.toJson();
@@ -152,6 +177,15 @@ void LmManager::handleReply(QNetworkReply *reply)
 
     reply->deleteLater();
     reply = nullptr;
+}
+
+void LmManager::refreshDailyQuote()
+{
+    generateQuote();
+
+    QDateTime now = QDateTime::currentDateTime();
+    QDateTime midnight(now.date().addDays(1), QTime(0, 0, 0));
+    m_dailyQuoteTimer->start(now.msecsTo(midnight));
 }
 
 

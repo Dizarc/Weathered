@@ -30,12 +30,10 @@ public:
 
 private slots:
     void updateClothingSuggestion();
-    void refreshDailyQuote();
 
 signals:
     void weatherModelChanged();
     void weatherDayModelChanged();
-
     void lmManagerChanged();
 
 private:

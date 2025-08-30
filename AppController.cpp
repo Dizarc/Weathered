@@ -9,10 +9,8 @@ AppController::AppController(QObject *parent)
 
     connect(m_weatherModel, &WeatherModel::currentWeatherChanged, this, &AppController::updateClothingSuggestion);
 
+    //TODO: dont call fetch here do it in weatherModel
     m_weatherModel->fetchGeoData();
-
-    // TODO: Change this to generate a quote every day at midnight.
-    m_lmManager->generateQuote();
 }
 
 WeatherModel *AppController::weatherModel() const
@@ -60,15 +58,12 @@ void AppController::updateClothingSuggestion()
     if(!w) return;
 
     m_lmManager->generateSuggestion(
+        m_weatherModel->city(),
         w->desc(),
+        w->dateTime(),
         w->temp(),
         w->feelTemp(),
         w->humidity(),
         w->wind(),
         w->clouds());
-}
-
-void AppController::refreshDailyQuote()
-{
-    m_lmManager->generateQuote();
 }
