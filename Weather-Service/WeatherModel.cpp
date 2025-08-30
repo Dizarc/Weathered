@@ -282,8 +282,6 @@ void WeatherModel::prunePastForecast()
     }
 
     if(itemsToRemove > 0) {
-        qDebug() << "Will remove: " << itemsToRemove;
-
         beginRemoveRows(QModelIndex(), 0, itemsToRemove - 1);
 
         m_weatherList.remove(0, itemsToRemove);
