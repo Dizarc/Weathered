@@ -8,6 +8,7 @@
 
 #include "Quote-Service/lmManager.h"
 
+// For Communication between the classes
 class AppController : public QObject
 {
     Q_OBJECT

@@ -15,13 +15,16 @@ Column {
     text: qsTr("Get Clothing suggestion")
     onClicked: {
       AppController.lmManager.generateSuggestion("Cloudy",26.7, 25.6, 40.1, 2.2, 70);
-    } // TODO: Get these variables from the current day, current hour.
+    }// TODO: Remove this after testing
   }
 
   Text {
     text: AppController.lmManager.suggestion.length > 0 ? AppController.lmManager.suggestion
           : "Loading..."
-    font.pointSize: 12
+    font.pointSize: 13
+    font.weight: Font.Light
+    width: 500
+    height: 500
     wrapMode: Text.WordWrap
   }
 }

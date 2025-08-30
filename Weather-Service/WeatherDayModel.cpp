@@ -5,7 +5,6 @@ WeatherDayModel::WeatherDayModel(WeatherModel *sourceModel, QObject *parent)
 {
     m_sourceModel = sourceModel;
 
-    //TODO: is this correct coding?
     connect(m_sourceModel, &WeatherModel::currentWeatherChanged, this, &WeatherDayModel::updateWeatherData);
 }
 

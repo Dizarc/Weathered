@@ -4,40 +4,38 @@ import QtQuick.Layouts
 Window {
   id: root
 
-  width: 640
-  height: 480
+  width: 1000
+  height: 1000
   visible: true
 
   title: qsTr("Weathered")
 
-  GridLayout {
-    id: grid
+    GridLayout {
+      anchors.fill: parent
 
-    anchors.fill: parent
+      columns: 2
+      rows: 2
+      columnSpacing: 10
+      rowSpacing: 10
 
-    columns: 2
-    rows: 2
+      WeatherBox {
+        Layout.preferredWidth: 500
+        Layout.preferredHeight: 800
+      }
 
-    //TODO: Change widths and heights later on.
-    WeatherBox {
-      Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-      Layout.fillHeight: true
-      Layout.fillWidth: true
+      ClothingBox {
+        Layout.preferredWidth: 500
+        Layout.preferredHeight: 500
+        Layout.alignment: Qt.AlignRight | Qt.AlignTop
+      }
+
+      QuoteBox {
+        Layout.preferredWidth: 300
+        Layout.preferredHeight: 300
+        Layout.columnSpan: 2
+        Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
+      }
     }
 
-    ClothingBox {
-      Layout.alignment: Qt.AlignRight | Qt.AlignTop
-      height: 500
-      width: 300
-    }
 
-    QuoteBox {
-
-      height: 500
-      width: 200
-      anchors.bottom: root.bottom
-      //anchors.horizontalCenter: root.width
-    }
-
-  }
 }
