@@ -11,10 +11,10 @@ services:
       - "/dev/dri:/dev/dri" # GPU access
       
     environment:
-      - QT_QPA_PLATFORM = eglfs
-      - API_KEY = ${API_KEY}
-      - API_CITY_COUNTRY = ${API_CITY_COUNTRY}
-      - LM_URL = http://llama-server:8080/v1/chat/completions
+      - QT_QPA_PLATFORM=eglfs
+      - API_KEY=${API_KEY}
+      - API_CITY_COUNTRY=${API_CITY_COUNTRY}
+      - LM_URL=http://llama-server:8080/v1/chat/completions
 
     networks:
       - weathered-net
@@ -29,7 +29,7 @@ services:
     
     ports:
       - "8080:8080"
-      
+
     networks:
       - weathered-net
 
