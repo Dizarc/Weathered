@@ -12,7 +12,7 @@
 #include <QJsonArray>
 #include <QTimer>
 
-#include "ApiAccess.hpp"
+#include "../ApiAccess.hpp"
 #include "Weather.h"
 
 class WeatherModel : public QAbstractListModel

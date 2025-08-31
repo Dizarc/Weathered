@@ -11,7 +11,7 @@
 #include <QRegularExpression>
 #include <QTimer>
 
-#include "Weather-Service/ApiAccess.hpp"
+#include "ApiAccess.hpp"
 
 class LmManager : public QObject
 {

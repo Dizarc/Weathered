@@ -16,8 +16,7 @@ RUN apt-get update && \
 WORKDIR /app
 COPY . .
 
-RUN cmake .
-RUN make
+RUN cmake -B build -S . && cmake --build build -j$(nproc)
 
 FROM debian:bookworm-slim
 
@@ -34,7 +33,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY --from=builder /app/appWeathered .
+COPY --from=builder /app/build/appWeathered .
 COPY --from=builder /app/Qml ./Qml
 
 # TODO: Environmental variables for the API stuff.

@@ -6,13 +6,15 @@ services:
 
     container_name: weathered-app
     restart: unless-stopped
-    privileged: true
-
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
+    
+    devices:
+      - "/dev/dri:/dev/dri" # GPU access
       
     environment:
-      - DISPLAY=${DISPLAY}
+      - QT_QPA_PLATFORM = eglfs
+      - API_KEY = ${API_KEY}
+      - API_CITY_COUNTRY = ${API_CITY_COUNTRY}
+      - LM_URL = http://llama-server:8080/v1/chat/completions
 
     networks:
       - weathered-net
@@ -27,6 +29,7 @@ services:
     
     ports:
       - "8080:8080"
+      
     networks:
       - weathered-net
 

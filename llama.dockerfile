@@ -8,10 +8,10 @@ RUN apt-get update && \
     wget
 
 WORKDIR /opt
-RUN git clone https://github.com/ggml-org/llama.cpp.git
+RUN git clone https://github.com/ggml-org/llama.cpp.git && \
 WORKDIR /opt/llama.cpp
 
-RUN cmake -B build -DLLAMA_SERVER=ON -DLLAMA_LINAL=OFF -DLLAMA_BLAS=OFF -DLLAMA_MPI=OFF
+RUN cmake -B build -DLLAMA_SERVER=ON -DLLAMA_BLAS=OFF -DLLAMA_MPI=OFF
 RUN cmake --build build --config Release -j --target server
 
 
@@ -36,4 +36,4 @@ COPY --from=model_downloader /model/model.gguf .
 
 EXPOSE 8080
 
-CMD ["./server", "-m", "./model.gguf", "--host", "0.0.0.0", "--port", :"8080", "--n-gpu-layers", "0"]
+CMD ["./server", "-m", "./model.gguf", "--host", "0.0.0.0", "--port", "8080", "--n-gpu-layers", "0"]
