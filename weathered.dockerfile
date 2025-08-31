@@ -6,10 +6,11 @@ RUN apt-get update && \
     build-essential \
     qt6-base-dev \
     qt6-declarative-dev \
-    qt6-qml-dev \
+    # qt6-qml-dev \
     libqt6quick6 \
     qml6-module-qtquick \
     qml6-module-qtquick-controls \
+    qml6-module-qtquick-layouts \
     git \
     cmake
 
@@ -29,7 +30,8 @@ RUN apt-get update && \
     libqt6quick6 \
     libqt6network6 \
     qml6-module-qtquick \
-    qml6-module-qtquick-controls && \
+    qml6-module-qtquick-controls \
+    qml6-module-qtquick-layouts && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

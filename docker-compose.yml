@@ -1,3 +1,4 @@
+#TODO: build Qt from sources because 6.8 is not available in bookworm.
 services:
   weathered:
     build:
@@ -6,7 +7,6 @@ services:
 
     container_name: weathered-app
     restart: unless-stopped
-    env_file: "docker.env"
     
     devices:
       - "/dev/dri:/dev/dri" # GPU access
@@ -27,7 +27,6 @@ services:
     
     container_name: llama-server-api
     restart: unless-stopped
-    env_file: "docker.env"
 
     ports:
       - "8080:8080"
