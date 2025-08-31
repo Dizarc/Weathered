@@ -30,6 +30,9 @@ services:
     ports:
       - "8080:8080"
 
+    volumes:
+      - ${MODEL_PATH}:/app/model.gguf
+
     networks:
       - weathered-net
 

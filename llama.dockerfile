@@ -15,24 +15,11 @@ RUN cmake -B build -DLLAMA_SERVER=ON -DLLAMA_BLAS=OFF -DLLAMA_MPI=OFF
 RUN cmake --build build --config Release -j --target server
 
 
-FROM debian:bookworm-slim as model_downloader
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget && \
-    rm -rf /var/lib/apt/lists/*
-
-WORKDIR /model
-
-# Download button from hf
-RUN wget https://huggingface.co/Qwen/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q8_0.gguf?download=true -O model.gguf
-
 FROM debian:bookworm-slim
 
 WORKDIR /app
 
 COPY --from=builder /opt/llama.cpp/build/bin/server .
-
-COPY --from=model_downloader /model/model.gguf .
 
 EXPOSE 8080
 

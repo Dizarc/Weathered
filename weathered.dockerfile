@@ -18,6 +18,7 @@ COPY . .
 
 RUN cmake -B build -S . && cmake --build build -j$(nproc)
 
+
 FROM debian:bookworm-slim
 
 RUN apt-get update && \
