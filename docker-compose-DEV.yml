@@ -1,20 +1,27 @@
+# For development workflow.
+# Build Qt once and code can be ran instantly through the dev compose by running make inside the container.
 services:
   weathered:
     build:
       context: .
       dockerfile: weathered.dockerfile
 
-    container_name: weathered-app
-    restart: unless-stopped
+    container_name: weathered-app-dev
+
+    command: tail -f /dev/null
     
     devices:
       - "/dev/dri:/dev/dri" # GPU access
       
     environment:
-      - QT_QPA_PLATFORM=eglfs
+      - DISPLAY=${DISPLAY} # For display
       - API_KEY=${API_KEY}
       - API_CITY_COUNTRY=${API_CITY_COUNTRY}
       - LM_URL=http://llama-server:8080/v1/chat/completions
+
+    volumes:
+      - /tmp/./X11-unix:/tmp/.X11-unix:rw # For display
+      - .:/app
 
     networks:
       - weathered-net

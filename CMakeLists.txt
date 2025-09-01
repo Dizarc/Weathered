@@ -39,6 +39,7 @@ qt_add_qml_module(appWeathered
         RESOURCES
             weathered.dockerfile
             llama.dockerfile
+            docker-compose-DEV.yml
             docker-compose.yml
 )
 
