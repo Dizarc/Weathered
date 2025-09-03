@@ -2,7 +2,6 @@
 #define WEATHERDAY_H
 
 #include <QObject>
-#include <QQmlListProperty>
 
 #include "Weather-Service/Weather.h"
 

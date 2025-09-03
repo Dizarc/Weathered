@@ -1,7 +1,7 @@
 #ifndef WEATHERMODEL_H
 #define WEATHERMODEL_H
 
-#include <QAbstractItemModel>
+#include <QAbstractListModel>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QProcessEnvironment>
