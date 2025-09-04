@@ -37,6 +37,8 @@ qt_add_qml_module(appWeathered
         Qml/ClothingBox.qml
 
         RESOURCES
+            .gitignore
+            .dockerignore
             weathered.dockerfile
             llama.dockerfile
             docker-compose-DEV.yml

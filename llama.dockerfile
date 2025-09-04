@@ -20,6 +20,11 @@ RUN cmake --build build --config Release -j --target llama-server
 
 FROM debian:bookworm-slim
 
+RUN apt-get update && \ 
+    apt-get install -y --no-install-recommends \
+    libnuma1 \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY --from=builder /opt/llama.cpp/build/bin/llama-server .

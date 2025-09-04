@@ -1,5 +1,5 @@
 # Qt6 and build tools for ARM64
-# TODO: memory issues, add less CPUs or switch to compiling on desktop
+
 FROM debian:bookworm AS qt-builder
 
 RUN apt-get update && \
@@ -11,6 +11,8 @@ RUN apt-get update && \
     ninja-build \
     python3 \
     perl \
+    ca-certificates \
+    # Qt Dependencies
     libfontconfig1-dev \
     libfreetype6-dev \
     libx11-dev \
@@ -33,11 +35,11 @@ RUN apt-get update && \
     libxkbcommon-dev \
     libxkbcommon-x11-dev \
     libdbus-1-dev \
+    libpng-dev \
     libcurl4-openssl-dev \
-    ca-certificates \
+    libclang-dev \
     && update-ca-certificates \ 
     && rm -rf /var/lib/apt/lists/*
-
 
 WORKDIR /opt
 
@@ -46,8 +48,8 @@ RUN wget https://download.qt.io/official_releases/qt/6.8/6.8.0/single/qt-everywh
 
 WORKDIR /opt/qt-everywhere-src-6.8.0
 
-# Install Qt into /opt/Qt6.8
-# REMOVE qtquickeffectmaker qt3d
+# Download and compile Qt into /opt/Qt6.8
+#TODO: Install with Ninja
 
 RUN mkdir build && cd build && \
     cmake .. \
@@ -79,56 +81,71 @@ RUN mkdir build && cd build && \
         -DBUILD_qtcharts=OFF \
         -DBUILD_qtcoap=OFF \
         -DBUILD_qtgraphs=OFF \
-        -DBUILD_qtactiveqt=OFF \
         -DBUILD_qtconnectivity=OFF \
         -DBUILD_qtdatavis3d=OFF \
         -DBUILD_qtgraphs=OFF \
         -DBUILD_qtserialport=OFF \
         -DBUILD_qtpositioning=OFF \
         -DBUILD_qtlocation=OFF \
-        -DBUILD_qttools=OFF \
         -DBUILD_qthttpserver=OFF \
         -DBUILD_qtwebsockets=OFF \
         -DBUILD_qtwebview=OFF \
         -DBUILD_qtwebengine=OFF \
         -DBUILD_qtwebchannel=OFF \
-        -DQT_FEATURE_DBUS=OFF && \
-    cmake --build . --parallel 4 && \
-    cmake --install .
+    && cmake --build . --parallel 4 \
+    && cmake --install .
 
 FROM debian:bookworm AS app-builder
 
-RUN apt-get update && \ 
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
-    git \
     cmake \
+    git \
     ninja-build \
+    ca-certificates \
+    # Qt Dependencies
+    libfontconfig1-dev \
+    libfreetype6-dev \
+    libx11-dev \
+    libx11-xcb-dev \
+    libxcb-glx0-dev \
+    libxcb-icccm4-dev \
+    libxcb-image0-dev \
+    libxcb-keysyms1-dev \
+    libxcb-render-util0-dev \
+    libxcb-shm0-dev \
+    libxcb-xinerama0-dev \
+    libxcb-xkb-dev \
+    libxext-dev \
+    libxfixes-dev \
+    libxrender-dev \
     libgl1-mesa-dev \
     libglu1-mesa-dev \
     libegl1-mesa-dev \
     libgles2-mesa-dev \
     libxkbcommon-dev \
     libxkbcommon-x11-dev \
-    libfontconfig1-dev \
-    libfreetype6-dev \
     libdbus-1-dev \
     libpng-dev \
-    ca-certificates \
-    && update-ca-certificates \
+    libcurl4-openssl-dev \
+    && update-ca-certificates \ 
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=qt-builder /opt/Qt6.8 /opt/Qt6.8
 
 WORKDIR /app
 COPY . .
-RUN /opt/Qt6.8/bin/qt-cmake -B build -S . && cmake --build build -j4
+# ENV PATH=/opt/Qt6.8/bin
 
+RUN cmake -B build -S . \
+    && cmake --build build -j4
 
 FROM debian:bookworm-slim
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    cmake \
     libgl1 \
     libegl1 \
     libxcb-xinerama0 \
@@ -139,9 +156,8 @@ RUN apt-get update && \
     libpng16-16 \
     && rm -rf /var/lib/apt/lists/*
 
-
 COPY --from=qt-builder /opt/Qt6.8 /opt/Qt6.8
-COPY --from=app-builder /app/build/appWeathered /app/appWeathered
+COPY --from=app-builder /app/appWeathered /app/appWeathered
 
 WORKDIR /app
 
