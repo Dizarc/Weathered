@@ -37,7 +37,6 @@ RUN apt-get update && \
     libdbus-1-dev \
     libpng-dev \
     libcurl4-openssl-dev \
-    libclang-dev \
     && update-ca-certificates \ 
     && rm -rf /var/lib/apt/lists/*
 
@@ -49,50 +48,49 @@ RUN wget https://download.qt.io/official_releases/qt/6.8/6.8.0/single/qt-everywh
 WORKDIR /opt/qt-everywhere-src-6.8.0
 
 # Download and compile Qt into /opt/Qt6.8
-#TODO: Install with Ninja
 
 RUN mkdir build && cd build && \
-    cmake .. \
-        -DCMAKE_INSTALL_PREFIX=/opt/Qt6.8 \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DBUILD_EXAMPLES=OFF \
-        -DBUILD_TESTS=OFF \
-        -DBUILD_qt3d=OFF \
-        -DBUILD_qt5compat=OFF \
-        -DBUILD_qtdoc=OFF \
-        -DBUILD_qtgrpc=OFF \
-        -DBUILD_qtlottie=OFF \
-        -DBUILD_qtmqtt=OFF \
-        -DBUILD_qtnetworkauth=OFF \
-        -DBUILD_qtopcua=OFF \
-        -DBUILD_qtquick3d=OFF \
-        -DBUILD_qtquick3dphysics=OFF \
-        -DBUILD_qtquickeffectmaker=OFF \
-        -DBUILD_remoteobjects=OFF \
-        -DBUILD_qtscxml=OFF \
-        -DBUILD_qtsensors=OFF \
-        -DBUILD_qtserialbus=OFF \
-        -DBUILD_qtspeech=OFF \
-        -DBUILD_qttranslations=OFF \
-        -DBUILD_qtvirtualkeyboard=OFF \
-        -DBUILD_qtwayland=OFF \
-        -DBUILD_qtquicktimeline=OFF \
-        -DBUILD_qtmultimedia=OFF \
-        -DBUILD_qtcharts=OFF \
-        -DBUILD_qtcoap=OFF \
-        -DBUILD_qtgraphs=OFF \
-        -DBUILD_qtconnectivity=OFF \
-        -DBUILD_qtdatavis3d=OFF \
-        -DBUILD_qtgraphs=OFF \
-        -DBUILD_qtserialport=OFF \
-        -DBUILD_qtpositioning=OFF \
-        -DBUILD_qtlocation=OFF \
-        -DBUILD_qthttpserver=OFF \
-        -DBUILD_qtwebsockets=OFF \
-        -DBUILD_qtwebview=OFF \
-        -DBUILD_qtwebengine=OFF \
-        -DBUILD_qtwebchannel=OFF \
-    && cmake --build . --parallel 4 \
+    ../configure -prefix /opt/Qt6.8 \
+    -release \
+    -opensource \
+    -confirm-license \
+    -nomake examples \
+    -nomake tests \
+    -skip qtsvg \
+    -skip qttools \
+    -skip qtserialbus \
+    -skip qtserialport -skip qtlocation \
+    -skip qttimeline \
+    -skip qtpositioning \
+    -skip qtmultimedia \
+    -skip qt3d \
+    -skip qtquick3d \
+    -skip qtquick3dphysics \
+    -skip qtdatavis3d \
+    -skip qtsensors \ 
+    -skip qtnetworkauth \
+    -skip qtconnectivity \ 
+    -skip qtwebsockets \
+    -skip qtwebchannel \
+    -skip qtcharts \
+    -skip qtwayland \
+    -skip qtvirtualkeyboard \
+    -skip qtwebengine \
+    -skip qtscxml \
+    -skip qtgrpc \
+    -skip qthttpserver \
+    -skip qtspeech \
+    -skip qt5compat \
+    -skip qtdoc \
+    -skip qtlottie \
+    -skip qtmqtt \
+    -skip qtquickeffectmaker \
+    -skip qttranslations \
+    -skip qtquicktimeline \
+    -skip qtcoap \
+    -skip qtgraphs \
+    -skip qtwebview \
+    && cmake --build . --parallel 6 \
     && cmake --install .
 
 FROM debian:bookworm AS app-builder
@@ -139,16 +137,21 @@ COPY . .
 # ENV PATH=/opt/Qt6.8/bin
 
 RUN cmake -B build -S . \
-    && cmake --build build -j4
+    && cmake --build build -j6
 
 FROM debian:bookworm-slim
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    cmake \
     libgl1 \
     libegl1 \
     libxcb-xinerama0 \
+    libxcd-icccm4 \
+    ligxcd-image0 \
+    libxcd-keysyms1 \
+    libxcd-render-util0 \
+    lixbcd-xinerama0 \
+    libxkbcommon-x11-0 \
     libcurl4 \
     libfontconfig1 \
     libfreetype6 \
@@ -157,7 +160,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=qt-builder /opt/Qt6.8 /opt/Qt6.8
-COPY --from=app-builder /app/appWeathered /app/appWeathered
+COPY --from=app-builder /app/build/appWeathered /app/appWeathered
 
 WORKDIR /app
 

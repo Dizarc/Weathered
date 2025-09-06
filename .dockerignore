@@ -1,3 +1,13 @@
 build/
 
 .env
+
+docker-compose.yml
+docker-compose-DEV.yml
+llama.dockerfile
+weathered.dockerfile
+
+.git
+.gitignore
+LICENSE
+README.md

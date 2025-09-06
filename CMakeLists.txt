@@ -35,14 +35,6 @@ qt_add_qml_module(appWeathered
         Qml/QuoteBox.qml
 
         Qml/ClothingBox.qml
-
-        RESOURCES
-            .gitignore
-            .dockerignore
-            weathered.dockerfile
-            llama.dockerfile
-            docker-compose-DEV.yml
-            docker-compose.yml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
