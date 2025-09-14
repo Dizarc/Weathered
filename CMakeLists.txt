@@ -20,7 +20,7 @@ qt_add_executable(appWeathered
     Weather-Service/WeatherDayModel.h Weather-Service/WeatherDayModel.cpp
     Weather-Service/WeatherDay.h Weather-Service/WeatherDay.cpp
 
-    Quote-Service/lmManager.h Quote-Service/lmManager.cpp
+    Lm-Service/lmManager.h Lm-Service/lmManager.cpp
 )
 
 qt_add_qml_module(appWeathered

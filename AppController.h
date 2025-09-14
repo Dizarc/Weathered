@@ -6,7 +6,7 @@
 #include "Weather-Service/WeatherModel.h"
 #include "Weather-Service/WeatherDayModel.h"
 
-#include "Quote-Service/lmManager.h"
+#include "Lm-Service/lmManager.h"
 
 // For Communication between the classes
 class AppController : public QObject
