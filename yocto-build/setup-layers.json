@@ -1,0 +1,58 @@
+{
+    "sources": {
+        "meta-openembedded": {
+            "git-remote": {
+                "branch": "scarthgap",
+                "describe": "",
+                "remotes": {
+                    "origin": {
+                        "uri": "https://github.com/openembedded/meta-openembedded.git"
+                    }
+                },
+                "rev": "b9fb6556a3c8a3e477dce334205b658cb79ad501"
+            },
+            "path": "poky/meta-openembedded"
+        },
+        "meta-qt6": {
+            "git-remote": {
+                "branch": "6.9.2",
+                "describe": "v6.9.2",
+                "remotes": {
+                    "origin": {
+                        "uri": "git://code.qt.io/yocto/meta-qt6.git"
+                    }
+                },
+                "rev": "5d62195736ee0cf0f538546a9a1e97332576dc82"
+            },
+            "path": "poky/meta-qt6"
+        },
+        "meta-raspberrypi": {
+            "git-remote": {
+                "branch": "scarthgap",
+                "describe": "",
+                "remotes": {
+                    "origin": {
+                        "uri": "git://git.yoctoproject.org/meta-raspberrypi"
+                    }
+                },
+                "rev": "aaf976a665daa7e520545908adef8a0e9410b57f"
+            },
+            "path": "poky/meta-raspberrypi"
+        },
+        "poky": {
+            "contains_this_file": true,
+            "git-remote": {
+                "branch": "scarthgap",
+                "describe": "yocto-5.0.12-38-g6400741e0c",
+                "remotes": {
+                    "origin": {
+                        "uri": "git://git.yoctoproject.org/poky"
+                    }
+                },
+                "rev": "6400741e0c11d1620a5ebe394d24deec295236f9"
+            },
+            "path": "poky"
+        }
+    },
+    "version": "1.0"
+}
