@@ -77,4 +77,4 @@ app/build/
 yocto-build/.env
 /yocto-build/downloads/
 /yocto-build/cache/
-/yocto-build/yocto-project
+/yocto-build/yocto-project/
