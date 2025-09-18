@@ -18,7 +18,7 @@
 * For Yocto builds: good computer
 
 ## How to build the embedded OS (Not finished)
-
+The build process is currently on hold due to computer restraints
 1. **Clone this repository:**
 ```bash
     git clone https://github.com/Dizarc/Weathered.git
@@ -50,6 +50,7 @@
     bitbake-layers add-layer ../meta-weathered
 ```
 5. **Add openembedded stuff to bblayers.conf because add-layer in bitbake does not work:**
+
 Your BBLAYERS inside poky/build/conf/bblayers.conf should look like this:
 ```bash
     BBLAYERS ?= " \
