@@ -9,7 +9,6 @@ class News : public QObject
     Q_OBJECT
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged FINAL);
     Q_PROPERTY(QString desc READ desc WRITE setDesc NOTIFY descChanged FINAL);
-    Q_PROPERTY(QUrl image READ image WRITE setImage NOTIFY imageChanged FINAL);
     Q_PROPERTY(QString dateTime READ dateTime WRITE setDateTime NOTIFY dateTimeChanged FINAL);
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged FINAL);
 
@@ -22,9 +21,6 @@ public:
     QString desc() const;
     void setDesc(const QString &newDesc);
 
-    QUrl image() const;
-    void setImage(const QUrl &newImage);
-
     QString dateTime() const;
     void setDateTime(const QString &newDateTime);
 
@@ -35,8 +31,6 @@ signals:
     void titleChanged();
     void descChanged();
 
-    void imageChanged();
-
     void dateTimeChanged();
 
     void sourceChanged();
@@ -44,7 +38,6 @@ signals:
 private:
     QString m_title;
     QString m_desc;
-    QUrl m_image;
     QString m_dateTime;
     QString m_source;
 };

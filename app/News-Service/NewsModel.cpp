@@ -24,8 +24,6 @@ QVariant NewsModel::data(const QModelIndex &index, int role) const
         return news->title();
     case descRole:
         return news->desc();
-    case imageRole:
-        return news->image();
     case dateTimeRole:
         return news->dateTime();
     case sourceRole:
@@ -41,7 +39,6 @@ QHash<int, QByteArray> NewsModel::roleNames() const
 
     names[titleRole] = "title";
     names[descRole] = "desc";
-    names[imageRole] = "image";
     names[dateTimeRole] = "dateTime";
     names[sourceRole] = "source";
 
@@ -104,7 +101,6 @@ void NewsModel::parseData()
 
                 news->setTitle(entry["title"].toString());
                 news->setDesc(entry["description"].toString());
-                news->setImage(QUrl(entry["image_url"].toString()));
                 news->setDateTime(entry["published_at"].toString());
                 news->setSource(entry["source"].toString());
 

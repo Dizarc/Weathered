@@ -30,19 +30,6 @@ void News::setDesc(const QString &newDesc)
     emit descChanged();
 }
 
-QUrl News::image() const
-{
-    return m_image;
-}
-
-void News::setImage(const QUrl &newImage)
-{
-    if (m_image == newImage)
-        return;
-    m_image = newImage;
-    emit imageChanged();
-}
-
 QString News::dateTime() const
 {
     return m_dateTime;
