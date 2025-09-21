@@ -53,7 +53,7 @@ signals:
 
 private:
     QNetworkAccessManager *m_manager;
-    QNetworkRequest *m_request = new QNetworkRequest(ModelAPI::LM_URL);
+    QNetworkRequest *m_request = new QNetworkRequest(ModelAPI::URL);
 
     QRegularExpression m_thinkTag;
 

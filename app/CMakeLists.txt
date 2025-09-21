@@ -21,6 +21,9 @@ qt_add_executable(appWeathered
     Weather-Service/WeatherDay.h Weather-Service/WeatherDay.cpp
 
     Lm-Service/lmManager.h Lm-Service/lmManager.cpp
+
+    News-Service/News.h News-Service/News.cpp
+    News-Service/NewsModel.h News-Service/NewsModel.cpp
 )
 
 qt_add_qml_module(appWeathered

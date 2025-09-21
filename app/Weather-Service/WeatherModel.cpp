@@ -96,11 +96,11 @@ void WeatherModel::setCurrentWeather(Weather *newCurrentWeather)
 
 void WeatherModel::fetchGeoData()
 {
-    if(WeatherAPI::API_KEY.isEmpty()) {
-        qWarning() << "Environmental variable \"API_KEY\" is empty!";
+    if(WeatherAPI::KEY.isEmpty()) {
+        qWarning() << "Environmental variable \"WEATHER_API_KEY\" is empty!";
         return;
     }
-    if(WeatherAPI::API_CITY_COUNTRY.isEmpty()) {
+    if(WeatherAPI::CITY_COUNTRY.isEmpty()) {
         qWarning() << "Environmental variable \"API_CITY_COUNTRY\" is empty!";
         return;
     }
@@ -113,9 +113,9 @@ void WeatherModel::fetchGeoData()
 
     QUrlQuery query;
 
-    query.addQueryItem("q", WeatherAPI::API_CITY_COUNTRY);
+    query.addQueryItem("q", WeatherAPI::CITY_COUNTRY);
     query.addQueryItem("limit", QString::number(1)); // limit to one place
-    query.addQueryItem("appid", WeatherAPI::API_KEY);
+    query.addQueryItem("appid", WeatherAPI::KEY);
 
     m_geoReply = m_manager->get(QNetworkRequest(WeatherAPI::GEOCODE_URL + "direct?" + query.toString()));
 
@@ -130,6 +130,7 @@ void WeatherModel::parseGeoData()
         QJsonParseError parseError;
         QJsonDocument jsonDocument = QJsonDocument::fromJson(data, &parseError);
 
+        // TODO: Change this because it doesnt delete later the reply
         if(parseError.error != QJsonParseError::NoError) {
             qWarning() << "Geocoding JSON parse error: " << parseError.errorString();
             return;
@@ -168,7 +169,7 @@ void WeatherModel::fetchWeatherData(const QString lat, const QString lon)
     query.addQueryItem("lat", lat);
     query.addQueryItem("lon", lon);
     query.addQueryItem("units", WeatherAPI::UNITS);
-    query.addQueryItem("appid", WeatherAPI::API_KEY);
+    query.addQueryItem("appid", WeatherAPI::KEY);
 
     m_weatherReply = m_manager->get(QNetworkRequest(WeatherAPI::WEATHER_URL + "forecast?" + query.toString()));
 
@@ -183,6 +184,7 @@ void WeatherModel::parseWeatherData()
         QJsonParseError parseError;
         QJsonDocument jsonDocument = QJsonDocument::fromJson(data, &parseError);
 
+        //TODO: Change this to include delete later of the reply
         if(parseError.error != QJsonParseError::NoError) {
             qWarning() << "Weather JSON parse error: " << parseError.errorString();
             return;

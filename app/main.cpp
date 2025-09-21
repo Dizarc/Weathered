@@ -13,15 +13,6 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    //WeatherModel *weatherModel = new WeatherModel(&app);
-    //qmlRegisterSingletonInstance("com.dizarc.WeatherModel", 1, 0, "WeatherModel", weatherModel);
-
-    //WeatherDayModel *weatherDayModel = new WeatherDayModel(weatherModel, &app);
-    //qmlRegisterSingletonInstance("com.dizarc.WeatherDayModel", 1, 0, "WeatherDayModel", weatherDayModel);
-
-    //LmManager *lmManager = new LmManager(&app);
-    //qmlRegisterSingletonInstance("com.dizarc.LmManager", 1, 0, "LmManager", lmManager);
-
     AppController *appController = new AppController(&app);
     qmlRegisterSingletonInstance("com.dizarc.AppController", 1, 0, "AppController", appController);
 

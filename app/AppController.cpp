@@ -6,6 +6,7 @@ AppController::AppController(QObject *parent)
     m_weatherModel = new WeatherModel(this);
     m_weatherDayModel = new WeatherDayModel(m_weatherModel, this);
     m_lmManager = new LmManager(this);
+    m_newsModel = new NewsModel(this);
 
     connect(m_weatherModel, &WeatherModel::currentWeatherChanged, this, &AppController::updateClothingSuggestion);
 
@@ -66,4 +67,17 @@ void AppController::updateClothingSuggestion()
         w->humidity(),
         w->wind(),
         w->clouds());
+}
+
+NewsModel *AppController::newsModel() const
+{
+    return m_newsModel;
+}
+
+void AppController::setNewsModel(NewsModel *newNewsModel)
+{
+    if (m_newsModel == newNewsModel)
+        return;
+    m_newsModel = newNewsModel;
+    emit newsModelChanged();
 }
