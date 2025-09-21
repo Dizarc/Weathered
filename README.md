@@ -8,6 +8,8 @@
 
 * 👒**Clothing suggestions** - Get outfit recommendations based on the weather.
 
+* 📰**News** - See current news around the world.
+
 * 🪞**Smart mirror ready** - Designed to run on a raspberry Pi with minimal setup making it an easy implementation with a step-by-step tutorial on the setup!
 
 ## Prerequisites
