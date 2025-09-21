@@ -6,6 +6,8 @@ WeatherModel::WeatherModel(QObject *parent) : QAbstractListModel{parent}
 
     connect(this, &WeatherModel::coordinatesReady, this, &WeatherModel::fetchWeatherData);
 
+    fetchGeoData();
+
     m_updateTimer = new QTimer(this);
     m_updateTimer->setInterval(60000);
     connect(m_updateTimer, &QTimer::timeout, this, &WeatherModel::prunePastForecast);
@@ -130,24 +132,22 @@ void WeatherModel::parseGeoData()
         QJsonParseError parseError;
         QJsonDocument jsonDocument = QJsonDocument::fromJson(data, &parseError);
 
-        // TODO: Change this because it doesnt delete later the reply
-        if(parseError.error != QJsonParseError::NoError) {
+        if(parseError.error == QJsonParseError::NoError) {
+            QJsonArray jsonArray = jsonDocument.array();
+
+            if(!jsonArray.isEmpty()) {
+                QJsonObject entry = jsonArray.first().toObject();
+
+                QString name = entry["name"].toString();
+                QString lat = QString::number(entry["lat"].toDouble());
+                QString lon = QString::number(entry["lon"].toDouble());
+
+                setCity(name);
+                emit coordinatesReady(lat, lon);
+            }
+
+        }else
             qWarning() << "Geocoding JSON parse error: " << parseError.errorString();
-            return;
-        }
-
-        QJsonArray jsonArray = jsonDocument.array();
-
-        if(!jsonArray.isEmpty()) {
-            QJsonObject entry = jsonArray.first().toObject();
-
-            QString name = entry["name"].toString();
-            QString lat = QString::number(entry["lat"].toDouble());
-            QString lon = QString::number(entry["lon"].toDouble());
-
-            setCity(name);
-            emit coordinatesReady(lat, lon);
-        }
     }
     else
         qWarning() << "Error from geocoding API reply: " + m_geoReply->errorString();
@@ -184,51 +184,49 @@ void WeatherModel::parseWeatherData()
         QJsonParseError parseError;
         QJsonDocument jsonDocument = QJsonDocument::fromJson(data, &parseError);
 
-        //TODO: Change this to include delete later of the reply
-        if(parseError.error != QJsonParseError::NoError) {
+        if(parseError.error == QJsonParseError::NoError) {
+            QJsonObject rootObject = jsonDocument.object();
+
+            QJsonArray forecastArray = rootObject["list"].toArray();
+
+            QList<Weather*> forecastList;
+
+            for( const QJsonValue &value : forecastArray){
+
+                QJsonObject entry = value.toObject();
+
+                QJsonArray weatherArray = entry["weather"].toArray();
+                QJsonObject weatherObject = weatherArray.at(0).toObject();
+
+                QJsonObject mainObject = entry["main"].toObject();
+                QJsonObject windObject = entry["wind"].toObject();
+                QJsonObject cloudsObject = entry["clouds"].toObject();
+
+                Weather *weather = new Weather(this);
+
+                weather->setDesc(weatherObject["description"].toString());
+                weather->setIcon(QUrl("https://openweathermap.org/img/wn/"
+                                      + weatherObject["icon"].toString()
+                                      + "@2x.png"));
+
+                weather->setDateTime(entry["dt_txt"].toString());
+
+                weather->setTemp(std::round(mainObject["temp"].toDouble() * 10.0) / 10.0);
+                weather->setFeelTemp(std::round(mainObject["feels_like"].toDouble() * 10.0) / 10.0);
+                weather->setHumidity(mainObject["humidity"].toDouble());
+                weather->setWind(windObject["speed"].toDouble());
+                weather->setClouds(cloudsObject["all"].toDouble());
+
+                forecastList << weather;
+            }
+
+            clearList();
+            addWeather(forecastList);
+
+            prunePastForecast();
+        }
+        else
             qWarning() << "Weather JSON parse error: " << parseError.errorString();
-            return;
-        }
-
-        QJsonObject rootObject = jsonDocument.object();
-
-        QJsonArray forecastArray = rootObject["list"].toArray();
-
-        QList<Weather*> forecastList;
-
-        for( const QJsonValue &value : forecastArray){
-
-            QJsonObject entry = value.toObject();
-
-            QJsonArray weatherArray = entry["weather"].toArray();
-            QJsonObject weatherObject = weatherArray.at(0).toObject();
-
-            QJsonObject mainObject = entry["main"].toObject();
-            QJsonObject windObject = entry["wind"].toObject();
-            QJsonObject cloudsObject = entry["clouds"].toObject();
-
-            Weather *weather = new Weather(this);
-
-            weather->setDesc(weatherObject["description"].toString());
-            weather->setIcon(QUrl("https://openweathermap.org/img/wn/"
-                                  + weatherObject["icon"].toString()
-                                  + "@2x.png"));
-
-            weather->setDateTime(entry["dt_txt"].toString());
-
-            weather->setTemp(std::round(mainObject["temp"].toDouble() * 10.0) / 10.0);
-            weather->setFeelTemp(std::round(mainObject["feels_like"].toDouble() * 10.0) / 10.0);
-            weather->setHumidity(mainObject["humidity"].toDouble());
-            weather->setWind(windObject["speed"].toDouble());
-            weather->setClouds(cloudsObject["all"].toDouble());
-
-            forecastList << weather;
-        }
-
-        clearList();
-        addWeather(forecastList);
-
-        prunePastForecast();
     }
     else
         qWarning() << "Error from geocoding API reply: " + m_weatherReply->errorString();

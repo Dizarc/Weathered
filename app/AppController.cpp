@@ -9,9 +9,6 @@ AppController::AppController(QObject *parent)
     m_newsModel = new NewsModel(this);
 
     connect(m_weatherModel, &WeatherModel::currentWeatherChanged, this, &AppController::updateClothingSuggestion);
-
-    //TODO: dont call fetch here do it in weatherModel
-    m_weatherModel->fetchGeoData();
 }
 
 WeatherModel *AppController::weatherModel() const
