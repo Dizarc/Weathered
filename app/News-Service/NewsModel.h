@@ -9,6 +9,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QTimer>
 
 #include "../ApiAccess.hpp"
 #include "News.h"
@@ -51,6 +52,8 @@ private:
 
     QNetworkAccessManager *m_manager;
     QNetworkReply *m_reply = nullptr;
+
+    QTimer *m_updateTimer;
 };
 
 #endif // NEWSMODEL_H

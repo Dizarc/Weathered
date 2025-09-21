@@ -5,6 +5,11 @@ NewsModel::NewsModel(QObject *parent) : QAbstractListModel{parent}
     m_manager = new QNetworkAccessManager(this);
 
     fetchData();
+
+    m_updateTimer = new QTimer(this);
+    m_updateTimer->setInterval(60000 * 15); // 15 minutes
+    connect(m_updateTimer, &QTimer::timeout, this, &NewsModel::fetchData);
+    m_updateTimer->start();
 }
 
 int NewsModel::rowCount(const QModelIndex &parent) const
