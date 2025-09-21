@@ -8,10 +8,15 @@ WeatherModel::WeatherModel(QObject *parent) : QAbstractListModel{parent}
 
     fetchGeoData();
 
-    m_updateTimer = new QTimer(this);
-    m_updateTimer->setInterval(60000);
-    connect(m_updateTimer, &QTimer::timeout, this, &WeatherModel::prunePastForecast);
-    m_updateTimer->start();
+    m_pruneTimer = new QTimer(this);
+    m_pruneTimer->setInterval(60000); // 1 minute
+    connect(m_pruneTimer, &QTimer::timeout, this, &WeatherModel::prunePastForecast);
+    m_pruneTimer->start();
+
+    m_fetchTimer = new QTimer(this);
+    m_fetchTimer->setInterval(60000 * 60 * 24); // 24 hour
+    connect(m_fetchTimer, &QTimer::timeout, this, &WeatherModel::fetchWeatherData);
+    m_fetchTimer->start();
 }
 
 int WeatherModel::rowCount(const QModelIndex &parent) const
@@ -143,7 +148,9 @@ void WeatherModel::parseGeoData()
                 QString lon = QString::number(entry["lon"].toDouble());
 
                 setCity(name);
-                emit coordinatesReady(lat, lon);
+                m_lat = lat;
+                m_lon = lon;
+                emit coordinatesReady();
             }
 
         }else
@@ -156,7 +163,7 @@ void WeatherModel::parseGeoData()
     m_geoReply = nullptr;
 }
 
-void WeatherModel::fetchWeatherData(const QString lat, const QString lon)
+void WeatherModel::fetchWeatherData()
 {
     if(m_weatherReply) {
         m_weatherReply->abort();
@@ -166,8 +173,8 @@ void WeatherModel::fetchWeatherData(const QString lat, const QString lon)
 
     QUrlQuery query;
 
-    query.addQueryItem("lat", lat);
-    query.addQueryItem("lon", lon);
+    query.addQueryItem("lat", m_lat);
+    query.addQueryItem("lon", m_lon);
     query.addQueryItem("units", WeatherAPI::UNITS);
     query.addQueryItem("appid", WeatherAPI::KEY);
 

@@ -52,7 +52,7 @@ private:
 
 public slots:
     void fetchGeoData();
-    void fetchWeatherData(const QString lat, const QString lon);
+    void fetchWeatherData();
 
 private slots:
     void parseGeoData();
@@ -61,7 +61,7 @@ private slots:
     void prunePastForecast();
 
 signals:
-    void coordinatesReady(const QString lat, const QString lon);
+    void coordinatesReady();
 
     void cityChanged();
 
@@ -71,12 +71,15 @@ private:
     QList<Weather*> m_weatherList;
     QString m_city;
     Weather *m_currentWeather = nullptr;
+    QString m_lat;
+    QString m_lon;
 
     QNetworkAccessManager *m_manager;
     QNetworkReply *m_geoReply = nullptr;
     QNetworkReply *m_weatherReply = nullptr;
 
-    QTimer *m_updateTimer;
+    QTimer *m_pruneTimer;
+    QTimer *m_fetchTimer;
 };
 
 #endif // WEATHERMODEL_H
