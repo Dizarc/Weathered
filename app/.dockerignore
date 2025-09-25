@@ -1,0 +1,7 @@
+build/
+
+.env
+
+docker-compose.yml
+docker-compose-DEV.yml
+Dockerfile
