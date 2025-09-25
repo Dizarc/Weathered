@@ -5,7 +5,7 @@ services:
   weathered:
     build:
       context: .
-      dockerfile: weathered.dockerfile
+      dockerfile: Dockerfile
       target: app-builder 
 
     container_name: weathered-app-dev

@@ -2,7 +2,7 @@ services:
   weathered:
     build:
       context: .
-      dockerfile: weathered.dockerfile
+      dockerfile: Dockerfile
 
     container_name: weathered-app
     restart: unless-stopped
@@ -20,11 +20,6 @@ services:
       - weathered-net
     
   llama-server:
-    build:
-      context: .
-      dockerfile: llama.dockerfile
-    
-    llama-server:
     image: ghcr.io/ggml-org/llama.cpp:server
     
     container_name: llama-server-api
