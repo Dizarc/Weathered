@@ -59,7 +59,8 @@ RUN mkdir build && cd build && \
     -skip qtsvg \
     -skip qttools \
     -skip qtserialbus \
-    -skip qtserialport -skip qtlocation \
+    -skip qtserialport \
+    -skip qtlocation \
     -skip qttimeline \
     -skip qtpositioning \
     -skip qtmultimedia \
@@ -143,21 +144,41 @@ FROM debian:bookworm-slim
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    locales \
+    # X11 and Qt dependencies
     libgl1 \
     libegl1 \
+    libx11-6 \
+    libxcb1 \
+    libx11-xcb1 \
+    libxcb-glx0 \
+    libxcb-xkb1 \
+    libxcb-icccm4 \
+    libxcb-image0 \
+    libxcb-keysyms1 \
+    libxcb-render0 \
+    libxcb-render-util0 \
+    libxcb-shape0 \
+    libxcb-shm0 \
+    libxcb-sync1 \
+    libxcb-xfixes0 \
     libxcb-xinerama0 \
-    libxcd-icccm4 \
-    ligxcd-image0 \
-    libxcd-keysyms1 \
-    libxcd-render-util0 \
-    lixbcd-xinerama0 \
+    libxcb-xkb1 \
+    libxkbcommon0 \
     libxkbcommon-x11-0 \
+    libxext6 \
+    libxfixes3 \
+    libxrender1 \
+    # Other Qt dependencies
     libcurl4 \
     libfontconfig1 \
     libfreetype6 \
     libdbus-1-3 \
     libpng16-16 \
     && rm -rf /var/lib/apt/lists/*
+
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+    locale-gen
 
 COPY --from=qt-builder /opt/Qt6.8 /opt/Qt6.8
 COPY --from=app-builder /app/build/appWeathered /app/appWeathered

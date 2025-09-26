@@ -16,13 +16,13 @@ services:
      # - "/dev/dri:/dev/dri" # GPU access
       
     environment:
-      - DISPLAY=${DISPLAY} # For display
+      - DISPLAY=${DISPLAY:-:0} # For display
       - QT_QPA_PLATFORM_PLUGIN_PATH=/opt/Qt6.8/plugins
       - LD_LIBRARY_PATH=/opt/Qt6.8/lib
 
       - API_KEY=${API_KEY}
       - API_CITY_COUNTRY=${API_CITY_COUNTRY}
-      - LM_URL=http://llama-server:8080/v1/chat/completions
+      - LM_URL="http://llama-server:8080/v1/chat/completions"
 
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw # For display
