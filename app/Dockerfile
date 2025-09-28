@@ -1,5 +1,3 @@
-# Qt6 and build tools for ARM64
-
 FROM debian:bookworm AS qt-builder
 
 RUN apt-get update && \
@@ -12,11 +10,23 @@ RUN apt-get update && \
     python3 \
     perl \
     ca-certificates \
-    # Qt Dependencies
-    libfontconfig1-dev \
-    libfreetype6-dev \
+    locales \
+    pkg-config \
+    \
+    # Font and text rendering
+    libfontconfig-dev \
+    libfreetype-dev \
+    libpng-dev \
+    \
+    # X11 and display system libraries for Qt XCB platform
     libx11-dev \
     libx11-xcb-dev \
+    libxext-dev \
+    libxfixes-dev \
+    libxrender-dev \
+    \
+    # XCB libraries
+    libxcb1-dev \
     libxcb-glx0-dev \
     libxcb-icccm4-dev \
     libxcb-image0-dev \
@@ -25,20 +35,35 @@ RUN apt-get update && \
     libxcb-shm0-dev \
     libxcb-xinerama0-dev \
     libxcb-xkb-dev \
-    libxext-dev \
-    libxfixes-dev \
-    libxrender-dev \
+    libxcb-util0-dev \
+    libxcb-cursor-dev \
+    libxcb-randr0-dev \
+    libxcb-render0-dev \
+    libxcb-shape0-dev \
+    libxcb-sync-dev \
+    libxcb-xfixes0-dev \
+    \
+    # Keyboard and input support
+    libxkbcommon-dev \
+    libxkbcommon-x11-dev \
+    \
+    # Graphics and OpenGL libraries
     libgl1-mesa-dev \
     libglu1-mesa-dev \
     libegl1-mesa-dev \
     libgles2-mesa-dev \
-    libxkbcommon-dev \
-    libxkbcommon-x11-dev \
+    \
+    # System integration
     libdbus-1-dev \
-    libpng-dev \
     libcurl4-openssl-dev \
+    \
     && update-ca-certificates \ 
     && rm -rf /var/lib/apt/lists/*
+
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 WORKDIR /opt
 
@@ -54,6 +79,7 @@ RUN mkdir build && cd build && \
     -release \
     -opensource \
     -confirm-license \
+    -feature-xcb \
     -nomake examples \
     -nomake tests \
     -skip qtsvg \
@@ -103,11 +129,21 @@ RUN apt-get update && \
     git \
     ninja-build \
     ca-certificates \
-    # Qt Dependencies
+    locales \
+    \
+    # Font and text rendering
     libfontconfig1-dev \
     libfreetype6-dev \
+    libpng-dev \
+    \
+    # X11 and display system libraries
     libx11-dev \
     libx11-xcb-dev \
+    libxext-dev \
+    libxfixes-dev \
+    libxrender-dev \
+    \
+    # XCB runtime libraries
     libxcb-glx0-dev \
     libxcb-icccm4-dev \
     libxcb-image0-dev \
@@ -116,20 +152,28 @@ RUN apt-get update && \
     libxcb-shm0-dev \
     libxcb-xinerama0-dev \
     libxcb-xkb-dev \
-    libxext-dev \
-    libxfixes-dev \
-    libxrender-dev \
+    \
+    # Keyboard support
+    libxkbcommon-dev \
+    libxkbcommon-x11-dev \
+    \
+    # Graphics libraries
     libgl1-mesa-dev \
     libglu1-mesa-dev \
     libegl1-mesa-dev \
     libgles2-mesa-dev \
-    libxkbcommon-dev \
-    libxkbcommon-x11-dev \
+    \
+    # System integration
     libdbus-1-dev \
-    libpng-dev \
     libcurl4-openssl-dev \
+    \
     && update-ca-certificates \ 
     && rm -rf /var/lib/apt/lists/*
+
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 COPY --from=qt-builder /opt/Qt6.8 /opt/Qt6.8
 
@@ -145,14 +189,24 @@ FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     locales \
-    # X11 and Qt dependencies
+    \
+    # X11 utilities for debugging
+    x11-utils \
+    \
+    # Graphics libraries
     libgl1 \
     libegl1 \
+    \
+    # X11 runtime libraries
     libx11-6 \
-    libxcb1 \
     libx11-xcb1 \
+    libxext6 \
+    libxfixes3 \
+    libxrender1 \
+    \
+    # XCB runtime libraries
+    libxcb1 \
     libxcb-glx0 \
-    libxcb-xkb1 \
     libxcb-icccm4 \
     libxcb-image0 \
     libxcb-keysyms1 \
@@ -164,21 +218,29 @@ RUN apt-get update && \
     libxcb-xfixes0 \
     libxcb-xinerama0 \
     libxcb-xkb1 \
+    libxcb-cursor0 \
+    libxcb-util1 \
+    libxcb-randr0 \
+    \
+    # Keyboard and input support
     libxkbcommon0 \
     libxkbcommon-x11-0 \
-    libxext6 \
-    libxfixes3 \
-    libxrender1 \
-    # Other Qt dependencies
-    libcurl4 \
+    \
+    # Font and text rendering
     libfontconfig1 \
     libfreetype6 \
-    libdbus-1-3 \
     libpng16-16 \
+    \
+    # System integration
+    libdbus-1-3 \
+    libcurl4 \
+    \
     && rm -rf /var/lib/apt/lists/*
 
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
-    locale-gen
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 COPY --from=qt-builder /opt/Qt6.8 /opt/Qt6.8
 COPY --from=app-builder /app/build/appWeathered /app/appWeathered
