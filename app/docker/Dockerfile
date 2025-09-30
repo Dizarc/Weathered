@@ -1,7 +1,7 @@
 FROM debian:bookworm AS qt-builder
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
     git \
@@ -57,6 +57,9 @@ RUN apt-get update && \
     libdbus-1-dev \
     libcurl4-openssl-dev \
     \
+    # SSL/TLS dev libraries
+    libssl-dev \
+    openssl \
     && update-ca-certificates \ 
     && rm -rf /var/lib/apt/lists/*
 
@@ -74,12 +77,14 @@ WORKDIR /opt/qt-everywhere-src-6.8.0
 
 # Download and compile Qt into /opt/Qt6.8
 
-RUN mkdir build && cd build && \
-    ../configure -prefix /opt/Qt6.8 \
+RUN mkdir build && cd build \
+    && ../configure -prefix /opt/Qt6.8 \
     -release \
     -opensource \
     -confirm-license \
-    -feature-xcb \
+    -xcb \
+    -ssl \
+    -openssl-runtime \
     -nomake examples \
     -nomake tests \
     -skip qtsvg \
@@ -122,8 +127,8 @@ RUN mkdir build && cd build && \
 
 FROM debian:bookworm AS app-builder
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
     git \
@@ -152,6 +157,10 @@ RUN apt-get update && \
     libxcb-shm0-dev \
     libxcb-xinerama0-dev \
     libxcb-xkb-dev \
+    libxcb-cursor0 \
+    libxcb-shape0 \
+    libxcb-util1 \
+    libxcb-randr0 \
     \
     # Keyboard support
     libxkbcommon-dev \
@@ -167,6 +176,9 @@ RUN apt-get update && \
     libdbus-1-dev \
     libcurl4-openssl-dev \
     \
+    # SSL/TLS dev libraries
+    libssl-dev \
+    libcrypto++-dev \
     && update-ca-certificates \ 
     && rm -rf /var/lib/apt/lists/*
 
@@ -179,15 +191,14 @@ COPY --from=qt-builder /opt/Qt6.8 /opt/Qt6.8
 
 WORKDIR /app
 COPY . .
-# ENV PATH=/opt/Qt6.8/bin
 
-RUN cmake -B build -S . \
-    && cmake --build build -j6
+RUN cmake -G Ninja -S . -B build/docker/ \
+    && ninja -C build/docker/
 
 FROM debian:bookworm-slim
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update\
+    && apt-get install -y --no-install-recommends \
     locales \
     \
     # X11 utilities for debugging
@@ -235,6 +246,11 @@ RUN apt-get update && \
     libdbus-1-3 \
     libcurl4 \
     \
+    # SSL/TLS support
+    libssl3 \
+    libcrypto3 \
+    ca-certificates \
+    openssl \
     && rm -rf /var/lib/apt/lists/*
 
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
@@ -243,7 +259,7 @@ ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 
 COPY --from=qt-builder /opt/Qt6.8 /opt/Qt6.8
-COPY --from=app-builder /app/build/appWeathered /app/appWeathered
+COPY --from=app-builder /app/build/docker/appWeathered /app/appWeathered
 
 WORKDIR /app
 

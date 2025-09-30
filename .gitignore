@@ -74,7 +74,8 @@ CMakeLists.txt.user*
 
 app/build/
 
-app/.env
+app/docker/.env
+
 /yocto-build/downloads/
 /yocto-build/cache/
 /yocto-build/yocto-project/

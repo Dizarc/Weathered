@@ -1,19 +1,19 @@
 # For development workflow.
 # Build Qt once and code can be ran instantly through the dev compose by running make inside the container.
-# TODO: fix issues with API access (SSL issues)
 services:
   weathered:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
       target: app-builder 
 
     container_name: weathered-app-dev
-
+    
     command: tail -f /dev/null
     
-    # devices:
-     # - "/dev/dri:/dev/dri" # GPU access
+    # If you're running from linux uncomment devices
+    #devices:
+      #- "/dev/dri:/dev/dri" # GPU access
       
     environment:
       - DISPLAY=host.docker.internal:0.0 # for linux: ${DISPLAY:-:0}  # For display
@@ -23,11 +23,11 @@ services:
       - WEATHER_API_KEY=${WEATHER_API_KEY}
       - WEATHER_API_CITY_COUNTRY=${WEATHER_API_CITY_COUNTRY}
       - NEWS_API_KEY=${NEWS_API_KEY}
-      - LM_URL="http://llama-server:8080/v1/chat/completions"
+      - LM_URL=http://llama-server:8080/v1/chat/completions
 
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw # For display
-      - .:/app
+      - ..:/app
 
     networks:
       - weathered-net
