@@ -17,23 +17,105 @@
 * Git 
 * Docker and Docker Compose
 * Internet connection
-* For Yocto builds: good computer
+* VcXsrv (For windows users) or an X11 server (for linux users) to enable GUI display in the Docker Development Environment
+* Yocto builds need a capable computer
 
-## How to build the embedded OS (Not finished)
-The build process is currently on hold due to computer restraints
-1. **Clone this repository:**
-```bash
-    git clone https://github.com/Dizarc/Weathered.git
-    cd Weathered/yocto-build
+## 🐳Setting up the Docker Development Environment
+
+This section explains how to build and run the app inside a Docker-based development environment. The environment includes both the Qt build system and the Llama.cpp API server for running the language model.
+
+### Display configuration (Windows vs Linux)
+
+The Docker Compose file already includes environment variables for display configuration.
+
+Depending on your host OS, **comment/uncomment** the appropriate lines inside docker-compose.yml:
+
+For Windows (using VcXsrv):
+```yml
+    #- DISPLAY=${DISPLAY:-:0} 
+    - DISPLAY=host.docker.internal:0.0 
 ```
 
-2. **Launch the Yocto Build environment:**
+For Linux (using local X11):
+```yml
+    - DISPLAY=${DISPLAY:-:0} 
+    #- DISPLAY=host.docker.internal:0.0 
+```
+
+Also ensure you have the X11 socket shared:
+```yml
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+```
+
+And finally for linux if available you can give GPU access:
+```yml
+    devices:
+      - "/dev/dri:/dev/dri" 
+```
+
+### Step 1: Build and start the Containers
+
+To build and start the containers you first need to create an .env file in the same folder as the docker-compose file.
+
+It should have these environmental variables: 
+* **WEATHER_API_KEY**: Your API key from OpenWeatherMap
+* **WEATHER_API_CITY_COUNTRY**: Your City, Country codes as per OpenWeatherMap docs
+* **NEWS_API_KEY**: Your API key from TheNewsApi
+* **MODEL_PATH**: A path pointing to your .gguf model file
+
+With that file created you are ready to build and start the containers:
 ```bash
-    docker compose -f docker-compose.yml up -d --build
+    docker compose up -d --build
+```
+This command:
+* Builds the docker images and
+* Starts the development container in detached mode
+
+### Step 2: Enter the dev Container
+
+Once the containers are running, open a shell inside the Qt development container with:
+```bash
+    docker exec -it weathered-app-dev /bin/bash
+```
+This places you inside the /app directory where your project files are mounted.
+
+### Step 3: Build and Run the app
+
+Inside the container build and run the app using CMake and Ninja:
+```bash
+    cmake -G Ninja -S . -B build/docker/ && ninja -C build/docker/ && build/docker/./appWeathered
+```
+This will:
+* Configure the build with CMake
+* Compile the project using Ninja
+* Launch the app
+
+If everything goes well the GUI should appear on your host display
+
+### Step 4: Stopping and Cleaning up
+
+To stop all running containers:
+```bash
+    docker compose down
+```
+
+To rebuild from scratch:
+```bash
+    docker compose down -v
+    docker compose up -d --build
+```
+
+## 🖥️How to build the embedded OS (Not finished)
+The build process is currently on hold due to computer restraints
+
+### 1. **Launch the Yocto Build environment inside yocto-build folder:**
+```bash
+    docker compose -d --build
     docker compose exec yocto-build-shell bash
 ```
 
-3. **Inside the container, clone the required Yocto layers:**
+### 2. **Inside the container, clone the required Yocto layers:**
 ```bash
     cd /home/builder/yocto
     git clone git://git.yoctoproject.org/poky -b scarthgap
@@ -43,7 +125,7 @@ The build process is currently on hold due to computer restraints
     git clone git://code.qt.io/yocto/meta-qt6.git -b 6.9.2
 ```
 
-4. **Initialize the build environment and build the image:**
+### 3. **Initialize the build environment and build the image:**
 ```bash
     oe-init-build-env
     bitbake-layers add-layer ../meta-raspberrypi
@@ -51,7 +133,7 @@ The build process is currently on hold due to computer restraints
     bitbake-layers create-layer ../meta-weathered
     bitbake-layers add-layer ../meta-weathered
 ```
-5. **Add openembedded stuff to bblayers.conf because add-layer in bitbake does not work:**
+### 4. **Add openembedded stuff to bblayers.conf because add-layer in bitbake does not work:**
 
 Your BBLAYERS inside poky/build/conf/bblayers.conf should look like this:
 ```bash
@@ -70,7 +152,7 @@ Your BBLAYERS inside poky/build/conf/bblayers.conf should look like this:
   "
 ```
 
-6. **Configure local.conf by adding:**
+### 5. **Configure local.conf by adding:**
 ```bash
     MACHINE = "raspberrypi5"
     INIT_MANAGER = "systemd"
@@ -80,20 +162,17 @@ Your BBLAYERS inside poky/build/conf/bblayers.conf should look like this:
     EXTRA_IMAGE_FEATURES += "ssh-server-openssh allow-empty-password empty-root-password allow-root-login" 
 ```
 
-7. **Configure llamacpp & Weathered recipes:**
+### 6. **Configure llamacpp & Weathered recipes:**
 
-8. **Build the final image:**
+### 7. **Build the final image:**
 
-## Saving and restoring layers setup
+### Saving and restoring layers setup
 Configuration file creation for replication
 ```bash
     bitbake-layers create-layers-setup [DESTINATION]
-    # This creates setup-layers and setup-layers.json
 ```
 
-## Application development with the SDK
+This creates setup-layers and setup-layers.json
+
+### Application development with the SDK
 For rapid application development without rebuilding the entire OS use an sdk.
-
-1. **Build the SDK:**
-
-2. **Install SDK on host:**
