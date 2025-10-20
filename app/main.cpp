@@ -1,12 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-//#include "Weather-Service/Weather.h"
-//#include "Weather-Service/WeatherModel.h"
-//#include "Weather-Service/WeatherDayModel.h"
-
-//#include "Quote-Service/lmManager.h"
-
 #include "AppController.h"
 
 int main(int argc, char *argv[])

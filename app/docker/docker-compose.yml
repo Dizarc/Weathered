@@ -16,7 +16,8 @@ services:
       #- "/dev/dri:/dev/dri" # GPU access
       
     environment:
-      - DISPLAY=host.docker.internal:0.0 # for linux: ${DISPLAY:-:0}  # For display
+      #- DISPLAY=${DISPLAY:-:0} # For display in Linux
+      - DISPLAY=host.docker.internal:0.0 # For display in Windows through VcXsrv
       - QT_QPA_PLATFORM_PLUGIN_PATH=/opt/Qt6.8/plugins
       - LD_LIBRARY_PATH=/opt/Qt6.8/lib
 

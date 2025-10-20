@@ -195,6 +195,8 @@ COPY . .
 RUN cmake -G Ninja -S . -B build/docker/ \
     && ninja -C build/docker/
 
+# After this is if you want a reproducible app.
+
 FROM debian:bookworm-slim
 
 RUN apt-get update\
